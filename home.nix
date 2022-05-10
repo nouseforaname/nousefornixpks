@@ -13,13 +13,30 @@
   };
 
   home.stateVersion = "22.05";
+  programs.vim = {
+    enable = true;
+    plugins = with pkgs.vimPlugins; [ vim-airline ];
+    settings = { ignorecase = true; };
+    extraConfig = ''
+      set paste
+      set tabstop=2
+      set expandtab=2
+      set shiftwidth=2
+      colorscheme koehler
+    '';
+  };
 
   home.packages = with pkgs; [
     jq
     gcc 
     clang-tools
     bosh
+    ruby-install
     direnv
+    nodenv
+    yarn
+    chruby
+    rbenv
   ];
   programs.bat = {
     enable = true;
@@ -75,9 +92,23 @@
 
   programs.alacritty = {
     enable = true;
-    
+    settings = {
+      env = {
+        "TERM" = "xterm-256color";
+      };
+      selection = {
+        save_to_clipboard = true;
+      };
+      #shell = {
+      # program = "${pkgs.bash}/bin/bash";
+       #args = [
+       #  "-l";
+       #  "-c";
+       #  "\"tmux attach || tmux\"";
+       #];
+      #};
+    };
   };
-
 # imports = [
 #   "${builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git"; }}/dell/precision/5530"
 # ];
