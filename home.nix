@@ -1,9 +1,8 @@
+
+
 { config, pkgs, options, ... }:
 
 {
-  home.sessionVariables = { 
-    PATH = "/run/wrappers/bin/:$PATH";
-  };
   programs.home-manager.enable = true;
 
   home.username = "kkiess";
@@ -15,40 +14,56 @@
   home.stateVersion = "22.05";
   programs.vim = {
     enable = true;
-    plugins = with pkgs.vimPlugins; [ vim-airline ];
-    settings = { ignorecase = true; };
+    plugins = with pkgs.vimPlugins; [ 
+
+    ];
     extraConfig = ''
       set paste
       set tabstop=2
       set expandtab=2
       set shiftwidth=2
-      colorscheme koehler
+      #colorscheme koehler
     '';
   };
 
   home.packages = with pkgs; [
+    chromedriver
+    bash-completion
+    libmysqlclient
+    postgresql
+    gdbm
+    libffi
+    ncurses5
+    libyaml
+    bison
+    openssl
     jq
-    gcc 
+    readline 
     clang-tools
     bosh
-    ruby-install
     direnv
     nodenv
     yarn
     chruby
-    rbenv
+    zlib
+    mysql57
+    htop
   ];
   programs.bat = {
     enable = true;
   };
+  
+  programs.chromium.enable = true;
+
   services.lorri.enable = true;
+
+
   programs.vscode = {
     enable = true;
     package = pkgs.vscodium;    # You can skip this if you want to use the unfree version
     extensions = with pkgs.vscode-extensions; [
       # Some example extensions...
       dracula-theme.theme-dracula
-      vscodevim.vim
     ];
   };
 
@@ -65,9 +80,15 @@
       grep = "grep --color=auto";
       code = "codium";
     };
+    bashrcExtra = ''
+      source ~/.nix-profile/share/chruby/chruby.sh  && chruby 2.7.6
+    '';
   };
   programs.starship = {
     enable = true;
+    settings = {
+      add_newline = true;
+    };
   };
   programs.git = {
     enable = true;
@@ -99,19 +120,7 @@
       selection = {
         save_to_clipboard = true;
       };
-      #shell = {
-      # program = "${pkgs.bash}/bin/bash";
-       #args = [
-       #  "-l";
-       #  "-c";
-       #  "\"tmux attach || tmux\"";
-       #];
-      #};
     };
   };
-# imports = [
-#   "${builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git"; }}/dell/precision/5530"
-# ];
-
 }
 
