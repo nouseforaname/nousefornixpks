@@ -1,6 +1,18 @@
+let
+  pkgs = import (builtins.fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/2158ec610d90359df7425e27298873a817b4c9dd.tar.gz";
+  }) {};
+  glibc2_7 = pkgs.glibc;
+  gcc_cust = pkgs.gcc.override {
+    libc = glibc2_7;
+    bintools = pkgs.binutils.override {
+      libc = glibc2_7;
+    };
+  };
+  glibc_path = pkgs.glibc.outPath;
 
-
-{ config, pkgs, options, ... }:
+in
+{ config, pkgs, options, lib, services, ... }:
 
 {
   programs.home-manager.enable = true;
@@ -79,9 +91,18 @@
       ll = "ls -la --color=auto";
       grep = "grep --color=auto";
       code = "codium";
+      cat = "bat --paging=never";
+      vi = "vim";
+      target_iaas = "x(){ source <(~/workspace/bosh-ecosystem-concourse/bin/iaas-director-print-env $1-director); }; x";
     };
     bashrcExtra = ''
       source ~/.nix-profile/share/chruby/chruby.sh  && chruby 2.7.6
+      export EDITOR=vi
+      eval "$(starship init bash)"
+      export FZF_CTRL_T_COMMAND="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}'"
+      export BASH_COMPLETION_USER_DIR=$HOME/.nix-profile/share/bash-completion/completions
+      ssh-add ~/keybase/private/nouseforaname/GITHUB/nouseforaname.pem
+      export CGO_LDFLAGS="-Xlinker --dynamic-linker=${glibc_path}"
     '';
   };
   programs.starship = {
