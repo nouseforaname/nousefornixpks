@@ -32,13 +32,19 @@ in
     extraConfig = ''
       set paste
       set tabstop=2
-      set expandtab=2
+      set expandtab
       set shiftwidth=2
-      #colorscheme koehler
+      set mouse-=a
+      set ttymouse-=a
+      colorscheme koehler
     '';
   };
-
+  
   home.packages = with pkgs; [
+    fly60
+    aws
+    google-cloud-sdk
+    credhub
     chromedriver
     bash-completion
     libmysqlclient
@@ -51,7 +57,7 @@ in
     openssl
     jq
     readline 
-    clang-tools
+    coreutils
     bosh
     direnv
     nodenv
@@ -77,10 +83,16 @@ in
       # Some example extensions...
       dracula-theme.theme-dracula
     ];
+    userSettings = {
+      javascript.validate.enable = false;
+      diffEditor.ignoreTrimWhitespace= false;
+    };
   };
 
   programs.fzf = {
     enable = true;
+    tmux.enableShellIntegration = true;
+
   };
   programs.bash = {
     enable = true;
