@@ -66,11 +66,40 @@ in
     zlib
     mysql57
     htop
+    ginkgo
+    godef
+    gopls
+    solargraph
+    unixtools.netstat
+    glibc2_7
+    gcc_cust
+    go
+
   ];
+  programs.tmux = {
+    enable = true;
+    keyMode = "vi";
+  };
   programs.bat = {
     enable = true;
   };
-  
+# services.postgresql = {
+#   enable = true;
+#   package = pkgs.postgresql_13;
+#   enableTCPIP = true;
+#   authentication = pkgs.lib.mkOverride 10 ''
+#     local all all trust
+#     host all all 127.0.0.1/32 trust
+#     host all all ::1/128 trust
+#   '';
+#   initialScript = pkgs.writeText "backend-initScript" ''
+#     CREATE ROLE nixcloud WITH LOGIN PASSWORD 'nixcloud' CREATEDB;
+#     CREATE DATABASE nixcloud;
+#     GRANT ALL PRIVILEGES ON DATABASE nixcloud TO nixcloud;
+#   '';
+# };
+
+
   programs.chromium.enable = true;
 
   services.lorri.enable = true;
