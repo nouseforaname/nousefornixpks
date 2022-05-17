@@ -19,10 +19,6 @@ in
 
   home.username = "kkiess";
   home.homeDirectory = "/home/kkiess";
-  home.shellAliases = {
-   alacritty = "nixGL alacritty";
-  };
-
   home.stateVersion = "22.05";
   programs.vim = {
     enable = true;
