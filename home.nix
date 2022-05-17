@@ -144,15 +144,32 @@ in
     bashrcExtra = ''
       source ~/.nix-profile/share/chruby/chruby.sh  && chruby 2.7.6
       export EDITOR=vi
-      eval "$(starship init bash)"
-      export FZF_CTRL_T_COMMAND="fzf --preview 'bat --style=numbers --color=always --line-range :500 {}'"
-      export BASH_COMPLETION_USER_DIR=$HOME/.nix-profile/share/bash-completion/completions
+      #export BASH_COMPLETION_USER_DIR=$HOME/.nix-profile/share/bash-completion/completions
       ssh-add ~/keybase/private/nouseforaname/GITHUB/nouseforaname.pem
-      export CGO_LDFLAGS="-Xlinker --dynamic-linker=${glibc_path}"
+      export CGO_LDFLAGS="-Xlinker rpath=/lib64/ld-linux-x86-64.so.2 -Xlinker --dynamic-linker=${glibc_path}"
+     # eval "$(starship init bash)"
+      function __file_search {
+	RG_PREFIX="rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color \"always\" -g \"*.{js,json,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf}\" -g '!{.git,node_modules,vendor}/*'"
+	INITIAL_QUERY=""
+	FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'" \
+	  fzf --bind "change:reload:$RG_PREFIX {q} || true" \
+	      --ansi --phony --query "$INITIAL_QUERY" | cut -f1-2 -d: | sed 's/:/ +/g'
+      }
+      function __open_in_vim {
+	path=$(__file_search)
+	echo $path
+	if [[ ! "$path" == "" ]]; then
+	  vim -p $path
+	fi
+      }
+      export __open_in_vim
+      bind -x '"\C-f":"__open_in_vim"'
     '';
   };
+
   programs.starship = {
     enable = true;
+    #enableBashIntegration = true;
     settings = {
       add_newline = true;
     };
