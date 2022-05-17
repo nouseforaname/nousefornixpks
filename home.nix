@@ -67,14 +67,17 @@ in
     gopls
     solargraph
     unixtools.netstat
-    glibc2_7
+    #glibc2_7
     gcc_cust
-    go
-
+    #go
+    go_1_18
   ];
   programs.tmux = {
     enable = true;
     keyMode = "vi";
+    baseIndex = 1;
+    #newSession = true;
+    shell = "${pkgs.bashInteractive}/bin/bash";
   };
   programs.bat = {
     enable = true;
@@ -117,6 +120,12 @@ in
   programs.fzf = {
     enable = true;
     tmux.enableShellIntegration = true;
+
+    fileWidgetCommand = "rg --files --hidden ./";
+    fileWidgetOptions = [ 
+      "--preview"
+      "'bat --style=numbers --color=always --line-range :500 {}'"
+    ];
 
   };
   programs.bash = {
