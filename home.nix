@@ -37,11 +37,15 @@ in
   };
   
   home.packages = with pkgs; [
-    fly60
+    #fly60
+    #fly76
+    ripgrep
+    fly77
     aws
     google-cloud-sdk
     credhub
     chromedriver
+    bashInteractive
     bash-completion
     libmysqlclient
     postgresql
