@@ -22,9 +22,7 @@ in
   home.stateVersion = "22.05";
   programs.vim = {
     enable = true;
-    plugins = with pkgs.vimPlugins; [ 
-
-    ];
+    plugins = with pkgs.vimPlugins;[  ];
     extraConfig = ''
       set paste
       set tabstop=2
@@ -39,8 +37,9 @@ in
   home.packages = with pkgs; [
     #fly60
     #fly76
-    ripgrep
     fly77
+    ripgrep
+    lastpass-cli
     aws
     google-cloud-sdk
     credhub
@@ -128,7 +127,7 @@ in
     fileWidgetCommand = "rg --files --hidden ./";
     fileWidgetOptions = [ 
       "--preview"
-      "'bat --style=numbers --color=always --line-range :500 {}'"
+      "'bat --style=numbers --color=always {}'"
     ];
 
   };
@@ -141,27 +140,30 @@ in
       ll = "ls -la --color=auto";
       grep = "grep --color=auto";
       code = "codium";
-      cat = "bat --paging=never";
+      cat = "bat --paging=never -pp --color always";
       vi = "vim";
       target_iaas = "x(){ source <(~/workspace/bosh-ecosystem-concourse/bin/iaas-director-print-env $1-director); }; x";
+      preview = "y(){ LINE=$(echo $1 | cut -f2 -d':' ); FILE=$(echo $1 | cut -f1 -d: ); }; y";
+
     };
     bashrcExtra = ''
       source ~/.nix-profile/share/chruby/chruby.sh  && chruby 2.7.6
       export EDITOR=vi
       #export BASH_COMPLETION_USER_DIR=$HOME/.nix-profile/share/bash-completion/completions
       ssh-add ~/keybase/private/nouseforaname/GITHUB/nouseforaname.pem
-      export CGO_LDFLAGS="-Xlinker rpath=/lib64/ld-linux-x86-64.so.2 -Xlinker --dynamic-linker=${glibc_path}"
-     # eval "$(starship init bash)"
+      export CGO_LDFLAGS="-Xlinker -rpath=${glibc_path}/lib/ld-linux-x86-64.so.2 -Xlinker --dynamic-linker=/lib64/ld-linux-x86-64.so.2"
+
       function __file_search {
-	RG_PREFIX="rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color \"always\" -g \"*.{js,json,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf}\" -g '!{.git,node_modules,vendor}/*'"
+	RG_PREFIX="rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color \"always\" -g \"*.{js,json,md,styl,html,config,py,cpp,c,go,hs,rb,conf,yml}\" -g '!{.git,node_modules,vendor}/*'"
 	INITIAL_QUERY=""
 	FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'" \
-	  fzf --bind "change:reload:$RG_PREFIX {q} || true" \
-	      --ansi --phony --query "$INITIAL_QUERY" | cut -f1-2 -d: | sed 's/:/ +/g'
+        fzf \
+          --bind "change:reload:$RG_PREFIX {q} || true" \
+          --preview 'echo {} | xargs -n 3 -d: bash -c "bat \$0 -r \$1: --color always --paging never" '  \
+	  --ansi --phony --query "$INITIAL_QUERY" | cut -f1-2 -d: | sed 's/:/ +/g'
       }
       function __open_in_vim {
 	path=$(__file_search)
-	echo $path
 	if [[ ! "$path" == "" ]]; then
 	  vim -p $path
 	fi
@@ -185,6 +187,7 @@ in
     extraConfig = {
       pull = { rebase = true; };
       init = { defaultBranch = "main"; };
+      commit.verbose = true;
     };
     ignores = [ "*~" ];
     lfs.enable = true;
