@@ -66,6 +66,7 @@ in
     mysql57
     htop
     ginkgo
+    mod
     godef
     gopls
     solargraph
@@ -74,11 +75,17 @@ in
     gcc_cust
     #go
     go_1_18
+    cloudfoundry-cli
   ];
   programs.tmux = {
     enable = true;
     keyMode = "vi";
     baseIndex = 1;
+    historyLimit = 10000;
+    extraConfig = ''
+      set -g mouse off
+      set-window-option -g xterm-keys on
+    '';
     #newSession = true;
     shell = "${pkgs.bashInteractive}/bin/bash";
   };
@@ -159,7 +166,7 @@ in
 	FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'" \
         fzf \
           --bind "change:reload:$RG_PREFIX {q} || true" \
-          --preview 'echo {} | xargs -n 3 -d: bash -c "bat \$0 -r \$1: --color always --paging never" '  \
+          --preview 'echo {} | xargs -n 3 -d: bash -c "bat \$0 -r \$1: --highlight-line \$1 --color always --paging never" '  \
 	  --ansi --phony --query "$INITIAL_QUERY" | cut -f1-2 -d: | sed 's/:/ +/g'
       }
       function __open_in_vim {
@@ -170,6 +177,7 @@ in
       }
       export __open_in_vim
       bind -x '"\C-f":"__open_in_vim"'
+      export TERM='xterm-256color'
     '';
   };
 
