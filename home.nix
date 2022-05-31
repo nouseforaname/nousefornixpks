@@ -30,6 +30,9 @@ in
       set shiftwidth=2
       set mouse-=a
       set ttymouse-=a
+      set noautoindent
+      set nocindent
+      set nosmartindent
       colorscheme koehler
     '';
   };
@@ -37,7 +40,9 @@ in
   home.packages = with pkgs; [
     #fly60
     #fly76
+    #clang
     fly77
+    sshuttle
     ripgrep
     lastpass-cli
     aws
@@ -49,7 +54,6 @@ in
     libmysqlclient
     postgresql
     gdbm
-    libffi
     ncurses5
     libyaml
     bison
@@ -57,25 +61,36 @@ in
     jq
     readline 
     coreutils
-    bosh
+    #bosh-6-4-17
+    bosh-7-0-0
     direnv
     nodenv
     yarn
     chruby
+    libffi
     zlib
+    zlib.dev
+    zlib-ng
+    libxml2
     mysql57
+    curlFull
     htop
     ginkgo
     mod
     godef
     gopls
     solargraph
+    libtool
     unixtools.netstat
     #glibc2_7
-    gcc_cust
+    #gcc_cust
+    #ruby
     #go
     go_1_18
     cloudfoundry-cli
+    ruby_3_1.devEnv
+    gcc
+
   ];
   programs.tmux = {
     enable = true;
@@ -154,7 +169,7 @@ in
 
     };
     bashrcExtra = ''
-      source ~/.nix-profile/share/chruby/chruby.sh  && chruby 2.7.6
+      source ~/.nix-profile/share/chruby/chruby.sh
       export EDITOR=vi
       #export BASH_COMPLETION_USER_DIR=$HOME/.nix-profile/share/bash-completion/completions
       ssh-add ~/keybase/private/nouseforaname/GITHUB/nouseforaname.pem
@@ -166,7 +181,7 @@ in
 	FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'" \
         fzf \
           --bind "change:reload:$RG_PREFIX {q} || true" \
-          --preview 'echo {} | xargs -n 3 -d: bash -c "bat \$0 -r \$1: --highlight-line \$1 --color always --paging never" '  \
+          --preview 'echo {} | xargs -n 4 -d: bash -c "LINE=\$1; if [[ \$LINE -gt 25 ]]; then PREV_LINE=\$((\$LINE-25)); else PREV_LINE=0; fi; bat \$0 -r \$PREV_LINE: --highlight-line \$1 --color always --paging never"'  \
 	  --ansi --phony --query "$INITIAL_QUERY" | cut -f1-2 -d: | sed 's/:/ +/g'
       }
       function __open_in_vim {
@@ -178,6 +193,10 @@ in
       export __open_in_vim
       bind -x '"\C-f":"__open_in_vim"'
       export TERM='xterm-256color'
+     #export LIBRARY_PATH+=${pkgs.zlib}/lib:${pkgs.zlib-ng}/lib:${pkgs.libxml2}/lib
+     #export LD_LIBRARY_PATH+=${pkgs.zlib}/lib:${pkgs.zlib-ng}/lib:${pkgs.libxml2}/lib:${pkgs.libffi}/lib
+     #export LDFLAGS="-Xlinker,-Wl,-rpath,${glibc_path}/lib/"
+     #export C_INCLUDE_PATH+=${pkgs.zlib.dev}/include
     '';
   };
 
