@@ -102,10 +102,10 @@ in
   
   home.packages = with pkgs; [
     #fly60
-    #fly76
-    #clang
-    tmate
-    fly77
+    fly78
+    #fly77
+    ytt
+    bosh-bootloader
     sshuttle
     ripgrep
     lastpass-cli
@@ -122,7 +122,7 @@ in
     libyaml
     bison
     openssl
-    bundix
+
     jq
     readline 
     coreutils
@@ -130,17 +130,17 @@ in
     bosh-7-0-0
     nodenv
     yarn
-    chruby
     curlFull
     htop
-    ginkgo
+    #ginkgo
     mod
     godef
     gopls
     gocode
     golangci-lint
     msgpack #deoplete dep
-    solargraph
+#   bundix
+#   solargraph
     libtool
     unixtools.netstat
     gcc
@@ -169,10 +169,14 @@ in
       bind-key -n End send Escape "OF"
     '';
     #newSession = true;
-    shell = "${pkgs.bashInteractive}/bin/bash";
+    #shell = "${pkgs.bashInteractive}/bin/bash";
   };
   programs.bat = {
     enable = true;
+    config = {
+      theme = "ansi";
+    };
+    
   };
 # services.postgresql = {
 #   enable = true;
@@ -190,11 +194,9 @@ in
 #   '';
 # };
 
-
   programs.chromium.enable = true;
 
   services.lorri.enable = true;
-
 
   programs.vscode = {
     enable = true;
@@ -211,9 +213,10 @@ in
 
   programs.fzf = {
     enable = true;
-    #tmux.enableShellIntegration = true;
-
-    fileWidgetCommand = "rg --files --hidden ./";
+    enableBashIntegration = true;
+    tmux.enableShellIntegration = true;
+    
+    fileWidgetCommand = "rg --files --hidden ./ -g \"!{.cache,.nix-*,.gem}\"";
     fileWidgetOptions = [ 
       "--preview"
       "'bat --style=numbers --color=always {}'"
@@ -229,24 +232,22 @@ in
       ll = "ls -la --color=auto";
       grep = "grep --color=auto";
       code = "codium";
-      cat = "bat --paging=never -pp --color always";
+      cat = "bat -pp";
       target_iaas = "x(){ source <(~/workspace/bosh-ecosystem-concourse/bin/iaas-director-print-env $1-director); }; x";
       preview = "y(){ LINE=$(echo $1 | cut -f2 -d':' ); FILE=$(echo $1 | cut -f1 -d: ); }; y";
     };
     bashrcExtra = ''
-      source ~/.nix-profile/share/chruby/chruby.sh
       export EDITOR=nvim
-      #export BASH_COMPLETION_USER_DIR=$HOME/.nix-profile/share/bash-completion/completions
       ssh-add ~/keybase/private/nouseforaname/GITHUB/nouseforaname.pem
 
 
       function __file_search {
-        RG_PREFIX="rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color \"always\" -g \"*.{log,js,json,md,html,config,cpp,c,go,hs,rb,conf,yml,yaml}\" -g '!{.git,node_modules,vendor}/*'"
+        RG_PREFIX="rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color \"always\" -g '!{.git,node_modules,vendor,.bosh}/*'"
         INITIAL_QUERY=""
         FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'" \
           fzf \
             --bind "change:reload:$RG_PREFIX {q} || true" \
-            --preview 'echo {} | xargs -n 4 -d: bash -c "LINE=\$1; if [[ \$LINE -gt 25 ]]; then PREV_LINE=\$((\$LINE-25)); else PREV_LINE=0; fi; bat \$0 -r \$PREV_LINE: --highlight-line \$1 --color always --paging never"'  \
+            --preview 'echo {} | xargs -n 4 -d: bash -c "LINE=\$1; if [[ \$LINE -gt 25 ]]; then PREV_LINE=\$((\$LINE-25)); else PREV_LINE=0; fi; bat \$0 -r \$PREV_LINE: --highlight-line \$LINE --color always --paging never"'  \
             --ansi --phony --query "$INITIAL_QUERY" | cut -f1-2 -d: | sed 's/:/ +/g'
       }
       function __open_in_vim {
@@ -258,7 +259,6 @@ in
       export __open_in_vim
       bind -x '"\C-f":"__open_in_vim"'
       export TERM='screen'
-      export FZF_TMUX=0
     '';
   };
 
