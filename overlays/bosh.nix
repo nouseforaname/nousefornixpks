@@ -1,7 +1,7 @@
 self: super:
 
 let
-  bosh = (versionArg: sha256Arg: (
+  bosh = versionArg: sha256Arg: (
     super.buildGoModule rec {
       pname = "bosh";
       version = versionArg;
@@ -29,13 +29,14 @@ let
       ''; 
 
       meta = with super.lib; {
-        description = "BOSH CLI v2+";
+        #description = "BOSH CLI v2+";
         homepage = "https://github.com/cloudfoundry/bosh-cli";
         license = licenses.asl20;
         maintainers = with maintainers; [ rkoster ];
       };
-    }));
+    });
 in {
   bosh-6-4-17 = bosh "6.4.17" "sha256-oVL7tBtdFJt6ktctSZiNZMd6g1LEWQ/Hra4rcGM6BnQ=";
   bosh-7-0-0 = bosh "7.0.0" "sha256-oVL7tBtdFJt6ktctSZiNZMd6g1LEWQ/Hra4rcGM6BnQ=";
+  bosh-7-0-1 = bosh "7.0.1" "sha256-CNicDFmWq2tgw3LEw8nOlwewY3cpzwS9ea4fxbwVJc0=";
 }

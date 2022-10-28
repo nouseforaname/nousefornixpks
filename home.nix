@@ -1,19 +1,20 @@
-{ config, pkgs, options, lib, services, ... }:
-let 
-  deoplete-tabnine-cust = pkgs.vimPlugins.deoplete-tabnine.overrideAttrs(old: {
-    postPatch = ''
-      substituteInPlace rplugin/python3/deoplete/sources/tabnine.py \
-        --replace "path = get_tabnine_path(binary_dir)" "path = '${pkgs.tabnine}/bin/TabNine'"
-    '';
-  });
-in  
+{ config, pkgs , options, lib, services, ... }:
+# let 
+#   deoplete-tabnine-cust = pkgs.vimPlugins.deoplete-tabnine.overrideAttrs(old: {
+#     postPatch = ''
+#       substituteInPlace rplugin/python3/deoplete/sources/tabnine.py \
+#         --replace "path = get_tabnine_path(binary_dir)" "path = '${pkgs.tabnine}/bin/TabNine'"
+#     '';
+#    });
+#  # opkgs = import (builtins.fetchTarball {
+#  #   url = "https://github.com/NixOS/nixpkgs/archive/d1c3fea7ecbed758168787fe4e4a3157e52bc808.tar.gz";
+#  # }) {};
+#  # inherit (opkgs) go_1_16;
+# in  
 {
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "tabnine"
-  ];
-
+  targets.genericLinux.enable =  true;
   programs.home-manager.enable = true;
-
+  nixpkgs.config.allowUnfree = true;
   home.username = "kkiess";
   home.homeDirectory = "/home/kkiess";
   home.stateVersion = "22.05";
@@ -25,21 +26,16 @@ in
     };
     plugins = with pkgs; with pkgs.vimPlugins;[
       LanguageClient-neovim
-      nvim-fzf
+      fzf-vim
+      fzf-lsp-nvim
+      vim-nix
       vim-go
-      # general deoplete for completion
-      deoplete-nvim
-      deoplete-lsp
-      deoplete-dictionary
-      # deo git
-      deoplete-github
-      # deoplete golang
-      deoplete-go
-      # deoplete javascript
-      deoplete-ternjs
+      vim-jsonnet
+      nvim-lspconfig
 
-      #deoplete ruby
-      deoplete-tabnine-cust
+      #terraform
+      vim-terraform
+      vim-terraform-completion
       
       #nix expressions
       statix
@@ -47,6 +43,16 @@ in
     viAlias = true;
     vimAlias = true;
     extraConfig = ''
+      set clipboard=unnamedplus
+
+      " KEY BINDINGS
+      autocmd FileType go nmap <leader>d  <Plug>(go-def)
+      autocmd FileType go nmap <leader>D  <Plug>(go-def-pop)
+      autocmd FileType go nmap gu  :GoReferrers<CR>
+
+      " gf for file search
+      nnoremap ff :Files<CR>
+
 
       " GENERAL SETTINGS
       set tabstop=2
@@ -56,96 +62,108 @@ in
       set noautoindent
       set nocindent
       set nosmartindent
+      set nu
       colorscheme koehler
       
 
       " LSP 
       let g:LanguageClient_autoStart = 1
-      let g:LanguageClient_autoStop = 1
+      let g:LanguageClient_autoStop = 0
       let g:LanguageClient_hasSnippetSupport = 1
       let g:LanguageClient_loadSettings = 1
+
+      let g:LanguageClient_serverCommands = {
+        \ 'go': ['gopls'],
+        \ 'ruby': ['solargraph', 'stdio']
+      \ }
 
       " GOLANG
 
       " autoimports
       let g:go_fmt_command = "goimports"
 
-      let g:LanguageClient_serverCommands = {
-        \ 'go': ['gopls'],
-        \ 'ruby': ['solargraph']
-      \ }
-      
       " Run gofmt on save
       autocmd BufWritePre *.go :call LanguageClient#textDocument_formatting_sync()
+      
+      " Linting
+      let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck','revive','staticcheck','unused','varcheck']
+      let g:go_metalinter_autosave = 1
 
-      " Use deoplete.
-      let g:deoplete#enable_at_startup = 1
+      " show type info
+      let g:go_auto_type_info = 1
+      " highlighting
 
-      call deoplete#custom#source('ultisnips', 'matchers', ['matcher_fuzzy'])
-      call deoplete#custom#source('ultisnips', 'rank', 1000)
-      call deoplete#custom#source('syntax', 'rank', 100)
+      let g:go_highlight_types = 1
+      let g:go_highlight_fields = 1
+      let g:go_highlight_function_calls = 1
+      let g:go_highlight_operators = 1
+      let g:go_highlight_extra_types = 1
+      let g:go_highlight_build_constraints = 1
 
-      " go completion
+      autocmd FileType ruby nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+      autocmd FileType ruby nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+      autocmd FileType ruby nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+      autocmd FileType ruby nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
-      call deoplete#custom#option('omni_patterns', {
-      \ 'go': '[^. *\t]\.\w*',
-      \ 'ruby': ['[^. *\t]\.\w*', '[a-zA-Z_]\w*::'],
-      \})
-
-      " ruby autocomplete
-     "call deoplete#custom#var('tabnine', {
-     "\ 'line_limit': 500,
-     "\ 'max_num_results': 20,
-     "\ })
     '';
   };
   
   home.packages = with pkgs; [
+    kubectl
+    kapp
+    #yq
+    yq-go
+    jsonnet
     #fly60
     fly78
     #fly77
+    terraform
+    virtualenv
+    # checkov
+    tfsec
+    tflint
     ytt
     bosh-bootloader
     sshuttle
     ripgrep
     lastpass-cli
     awscli
+    azure-cli
+    azure-storage-azcopy
     google-cloud-sdk
-    credhub
+    credhub_latest
     chromedriver
     bashInteractive
     bash-completion
     libmysqlclient
     postgresql
+    nix-prefetch-git
     gdbm
     ncurses5
     libyaml
     bison
     openssl
-
     jq
     readline 
     coreutils
     #bosh-6-4-17
-    bosh-7-0-0
+    bosh-7-0-1
     nodenv
     yarn
     curlFull
     htop
-    #ginkgo
     mod
     godef
     gopls
     gocode
     golangci-lint
-    msgpack #deoplete dep
-#   bundix
-#   solargraph
+    go_1_19
+    slack
+    firefox
     libtool
     unixtools.netstat
     gcc
     patchelf
-    go_1_18
     cloudfoundry-cli
     tabnine
     #javascript
@@ -178,22 +196,6 @@ in
     };
     
   };
-# services.postgresql = {
-#   enable = true;
-#   package = pkgs.postgresql_13;
-#   enableTCPIP = true;
-#   authentication = pkgs.lib.mkOverride 10 ''
-#     local all all trust
-#     host all all 127.0.0.1/32 trust
-#     host all all ::1/128 trust
-#   '';
-#   initialScript = pkgs.writeText "backend-initScript" ''
-#     CREATE ROLE nixcloud WITH LOGIN PASSWORD 'nixcloud' CREATEDB;
-#     CREATE DATABASE nixcloud;
-#     GRANT ALL PRIVILEGES ON DATABASE nixcloud TO nixcloud;
-#   '';
-# };
-
   programs.chromium.enable = true;
 
   services.lorri.enable = true;
@@ -215,8 +217,10 @@ in
     enable = true;
     enableBashIntegration = true;
     tmux.enableShellIntegration = true;
-    
-    fileWidgetCommand = "rg --files --hidden ./ -g \"!{.cache,.nix-*,.gem}\"";
+    enableZshIntegration = false;
+    enableFishIntegration = false;
+    fileWidgetCommand = "rg --files --hidden ./ -g '!*{.git,.cache,.nix-*,.gem,vendor,gems,tmp}*' ";
+    changeDirWidgetCommand = "find ~/workspace -type d | sed 's#.*kkiess#\${HOME}#'";
     fileWidgetOptions = [ 
       "--preview"
       "'bat --style=numbers --color=always {}'"
@@ -230,35 +234,43 @@ in
     shellAliases = {
       ls = "ls --color=auto";
       ll = "ls -la --color=auto";
+      omfly = "nix-shell /home/kkiess/workspace/nousefornixpkg/shells/fly-60.nix";
       grep = "grep --color=auto";
       code = "codium";
       cat = "bat -pp";
       target_iaas = "x(){ source <(~/workspace/bosh-ecosystem-concourse/bin/iaas-director-print-env $1-director); }; x";
+      target_concourse_credhub = "source <(~/workspace/bosh-ecosystem-concourse/bin/concourse-credhub-print-env )";
       preview = "y(){ LINE=$(echo $1 | cut -f2 -d':' ); FILE=$(echo $1 | cut -f1 -d: ); }; y";
     };
     bashrcExtra = ''
+      export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels''${NIX_PATH:+:$NIX_PATH}
       export EDITOR=nvim
       ssh-add ~/keybase/private/nouseforaname/GITHUB/nouseforaname.pem
+      source <(kubectl completion bash)
+      alias vpn='gpu -c'
 
 
       function __file_search {
-        RG_PREFIX="rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color \"always\" -g '!{.git,node_modules,vendor,.bosh}/*'"
+        RG_PREFIX="rg --line-number -S --no-heading --ignore-case --no-ignore --hidden --follow -g \"!{.git,node_modules,vendor,.bosh,tmp}/*\" -g \"!*/{.git,node_modules,vendor,.bosh,tmp}/*\""
         INITIAL_QUERY=""
-        FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'" \
+        FZF_DEFAULT_COMMAND="$RG_PREFIX \"''${INITIAL_QUERY}\" | cut -f1-2 -d: " \
           fzf \
-            --bind "change:reload:$RG_PREFIX {q} || true" \
-            --preview 'echo {} | xargs -n 4 -d: bash -c "LINE=\$1; if [[ \$LINE -gt 25 ]]; then PREV_LINE=\$((\$LINE-25)); else PREV_LINE=0; fi; bat \$0 -r \$PREV_LINE: --highlight-line \$LINE --color always --paging never"'  \
-            --ansi --phony --query "$INITIAL_QUERY" | cut -f1-2 -d: | sed 's/:/ +/g'
+            --bind "change:reload:$RG_PREFIX {q} | cut -f1-2 -d: || true" \
+            --preview 'echo {} | xargs -n 3 -d: bash -c "LINE=\$1; if [[ \$LINE -gt 25 ]]; then PREV_LINE=\$((\$LINE-25)); else PREV_LINE=0; fi; bat \$0 -r \$PREV_LINE: --highlight-line \$LINE:\$LINE --color always --paging never"'  \
+            --ansi --phony --query "$INITIAL_QUERY" | sed 's/:/ +/g'
       }
       function __open_in_vim {
         path=$(__file_search)
         if [[ ! "$path" == "" ]]; then
+          history -s "nvim -p $path"
           nvim -p $path
         fi
       }
       export __open_in_vim
       bind -x '"\C-f":"__open_in_vim"'
       export TERM='screen'
+      export PATH=$PATH:~/workspace/services-enablement-home/bin:~/go/bin
+      source ~/workspace/services-enablement-home/bin/target-csb-func
     '';
   };
 
@@ -266,7 +278,7 @@ in
     enable = true;
     enableBashIntegration = true;
     settings = {
-      add_newline = true;
+      add_newline = false;
     };
   };
   programs.git = {
@@ -276,6 +288,7 @@ in
     extraConfig = {
       pull = { rebase = true; };
       init = { defaultBranch = "main"; };
+      push = { autoSetupRemote = true; };
       commit.verbose = true;
     };
     ignores = [ "*~" ];
@@ -293,6 +306,7 @@ in
 
   programs.alacritty = {
     enable = true;
+
     settings = {
       env = {
         "TERM" = "xterm-256color";
