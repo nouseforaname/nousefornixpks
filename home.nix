@@ -25,6 +25,7 @@
       package = pkgs.vimPlugins.LanguageClient-neovim;
     };
     plugins = with pkgs; with pkgs.vimPlugins;[
+      # LSPs
       LanguageClient-neovim
       fzf-vim
       fzf-lsp-nvim
@@ -32,6 +33,15 @@
       vim-go
       vim-jsonnet
       nvim-lspconfig
+      nvim-cmp
+      cmp-nvim-lsp
+      #vim-lsp
+      #deoplete-vim-lsp
+
+      # vim autocomplete
+      #deoplete-nvim
+      #deoplete-lsp
+
 
       #terraform
       vim-terraform
@@ -45,12 +55,75 @@
     extraConfig = ''
       set clipboard=unnamedplus
 
+      " RUBY SETUP 
+lua << EOF
+      local nvim_lsp = require('lspconfig')
+
+      -- Use an on_attach function to only map the following keys
+      -- after the language server attaches to the current buffer
+      local on_attach = function(client, bufnr)
+        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+        local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+        --Enable completion triggered by <c-x><c-o>
+        buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+        -- Mappings.
+        local opts = { noremap=true, silent=true }
+
+        -- See `:help vim.lsp.*` for documentation on any of the below functions
+        buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+        buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+        buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+        buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+        buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+        buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+        buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+        buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+        buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+        buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+        buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+        buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+        buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+        buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+        buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+        buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+
+      end
+
+      -- Use a loop to conveniently call 'setup' on multiple servers and
+      -- map buffer local keybindings when the language server attaches
+      local servers = { "solargraph" }
+      for _, lsp in ipairs(servers) do
+        nvim_lsp[lsp].setup {
+          on_attach = on_attach,
+          flags = {
+            debounce_text_changes = 150,
+          }
+        }
+      end
+
+      require'cmp'.setup {
+        sources = {
+          { name = 'nvim_lsp' }
+        },
+        capabilities = capabilities
+      }
+
+      -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+            
+EOF
+
+
+      " ENABLE AUTOCOMPLETION
+
       " KEY BINDINGS
       autocmd FileType go nmap <leader>d  <Plug>(go-def)
       autocmd FileType go nmap <leader>D  <Plug>(go-def-pop)
       autocmd FileType go nmap gu  :GoReferrers<CR>
 
-      " gf for file search
+      " ff for file search
       nnoremap ff :Files<CR>
 
 
@@ -66,7 +139,7 @@
       colorscheme koehler
       
 
-      " LSP 
+      " LanguageClient Go ruby was super slow
       let g:LanguageClient_autoStart = 1
       let g:LanguageClient_autoStop = 0
       let g:LanguageClient_hasSnippetSupport = 1
@@ -74,7 +147,6 @@
 
       let g:LanguageClient_serverCommands = {
         \ 'go': ['gopls'],
-        \ 'ruby': ['solargraph', 'stdio']
       \ }
 
       " GOLANG
@@ -99,12 +171,6 @@
       let g:go_highlight_operators = 1
       let g:go_highlight_extra_types = 1
       let g:go_highlight_build_constraints = 1
-
-      autocmd FileType ruby nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-      autocmd FileType ruby nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-      autocmd FileType ruby nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-      autocmd FileType ruby nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
-
     '';
   };
   
