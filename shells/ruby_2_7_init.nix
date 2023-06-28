@@ -20,10 +20,10 @@ in stdenv.mkDerivation {
   name = "env";
   buildInputs = [
     ruby_2_7
+    solargraph
     rubyPackages.rspec
     rubyPackages.rubocop
     bundler
-    bundix
     sqlite
     libpcap
     postgresql
