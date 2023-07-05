@@ -30,7 +30,8 @@
       deoplete-nvim
       deoplete-lsp
 
-
+      #json highlighting
+      vim-json
       #terraform
       vim-terraform
       vim-terraform-completion
