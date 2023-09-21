@@ -12,7 +12,7 @@ let
         rev = "v${version}";
         sha256 = sha256Arg;
       };
-
+      
       vendorSha256 = null;
 
       doCheck = false;
@@ -41,4 +41,5 @@ in {
   bosh-7-0-0 = bosh "7.0.0" "sha256-oVL7tBtdFJt6ktctSZiNZMd6g1LEWQ/Hra4rcGM6BnQ=";
   bosh-7-0-1 = bosh "7.0.1" "sha256-CNicDFmWq2tgw3LEw8nOlwewY3cpzwS9ea4fxbwVJc0=";
   bosh-7-2-3 = bosh "7.2.3" "sha256-CNicDFmWq2tgw3LEw8nOlwewY3cpzwS9ea4fxbwVJc0=";
+  bosh-7-4-0 = bosh "7.4.0" "sha256-Hxak76S3+i5G81Xv4wdFvR/+vg5Eh86YjeqRzNUmfh4=";
 }
