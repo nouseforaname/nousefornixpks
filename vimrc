@@ -1,97 +1,6 @@
-set clipboard=unnamedplus
-au! BufRead,BufNewFile *.json set filetype=json
-augroup json_autocmd
-  autocmd!
-  autocmd FileType json set autoindent
-  autocmd FileType json set formatoptions=tcq2l
-  autocmd FileType json set textwidth=78 shiftwidth=2
-  autocmd FileType json set softtabstop=2 tabstop=8
-  autocmd FileType json set expandtab
-  autocmd FileType json set foldmethod=syntax
-augroup END
-
-" https://vonheikemen.github.io/devlog/tools/setup-nvim-lspconfig-plus-nvim-cmp/
-" RUBY SETUP 
-lua << EOF
-  local nvim_lsp = require('lspconfig')
-  local lsp_defaults = nvim_lsp.util.default_config
-  lsp_defaults.capabilities = vim.tbl_deep_extend(
-    'force',
-    lsp_defaults.capabilities,
-    require('cmp_nvim_lsp').default_capabilities()
-  )
-  vim.api.nvim_create_autocmd('LspAttach', {
-    desc = 'LSP actions',
-    callback = function()
-      local bufmap = function(mode, lhs, rhs)
-        local opts = {buffer = true}
-        vim.keymap.set(mode, lhs, rhs, opts)
-      end
-      bufmap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
-
-      -- Jump to the definition
-      bufmap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>')
-
-      -- Jump to declaration
-      bufmap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>')
-
-      -- Lists all the implementations for the symbol under the cursor
-      bufmap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>')
-
-      -- Jumps to the definition of the type symbol
-      bufmap('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>')
-
-      -- Lists all the references 
-      bufmap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>')
-
-      -- Displays a function's signature information
-      bufmap('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>')
-
-      -- Renames all references to the symbol under the cursor
-      bufmap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>')
-
-      -- Selects a code action available at the current cursor position
-      bufmap('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>')
-      bufmap('x', '<F4>', '<cmd>lua vim.lsp.buf.range_code_action()<cr>')
-
-      -- Show diagnostics in a floating window
-      bufmap('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
-
-      -- Move to the previous diagnostic
-      bufmap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
-
-      -- Move to the next diagnostic
-        bufmap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
-    end
-  })
-
-  nvim_lsp.solargraph.setup({
-    on_attach = on_attach,
-    flags = {
-      debounce_text_changes = 150,
-    },
-    settings = {
-      filetypes = {"ruby"};
-      capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities()),
-      cmd = {"bundle", "exec", "solargraph", "stdio"},
-      solargraph = {
-        useBundler = true,
-        diagnostics = true,
-        completion = true
-      }
-    }
-  })
-EOF
-
-" ENABLE AUTOCOMPLETION
-
-
-" ff for file search
-nnoremap ff :Files<CR>
-nnoremap fs :Rg<CR>
-
-
 " GENERAL SETTINGS
+set clipboard=unnamedplus
+set paste
 set tabstop=2
 set expandtab
 set shiftwidth=2
@@ -106,51 +15,160 @@ set cursorline
 set cursorlineopt=number
 
 
-" LanguageClient Go ruby was super slow
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_autoStop = 0
-let g:LanguageClient_hasSnippetSupport = 1
-let g:LanguageClient_loadSettings = 1
+" au! BufRead,BufNewFile *.json set filetype=json
+" augroup json_autocmd
+"   autocmd!
+"   autocmd FileType json set autoindent
+"   autocmd FileType json set formatoptions=tcq2l
+"   autocmd FileType json set textwidth=78 shiftwidth=2
+"   autocmd FileType json set softtabstop=2 tabstop=8
+"   autocmd FileType json set expandtab
+"   autocmd FileType json set foldmethod=syntax
+" augroup END
 
-let g:LanguageClient_serverCommands = {
-  \ 'go': ['gopls'],
-\ }
+" https://vonheikemen.github.io/devlog/tools/setup-nvim-lspconfig-plus-nvim-cmp/
+" RUBY SETUP 
 
-" GOLANG
+lua << EOF
+local lspconfig = require('lspconfig')
+local lsp_defaults = lspconfig.util.default_config
 
-" KEY BINDINGS
-autocmd FileType go nmap <leader>d  <Plug>(go-def)
-autocmd FileType go nmap <leader>D  <Plug>(go-def-pop)
-autocmd FileType go nmap <F9> :GoDebugStart<CR>
-autocmd FileType go nmap <F10> :GoDebugTest<CR>
-autocmd FileType go nmap <F11> :GoDebugStop<CR>
-autocmd FileType go nmap <F6> :GoDebugBreakpoint<CR>
+lsp_defaults.capabilities = vim.tbl_deep_extend(
+  'force',
+  lsp_defaults.capabilities,
+  require('cmp_nvim_lsp').default_capabilities()
+)
+local cmp = require 'cmp'
+local select_opts = {behavior = cmp.SelectBehavior.Select}
+vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+    end,
+  },
+	view = {
+		entries = "native",
+	},
+  mapping = {
+    ['<CR>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i", "s", "c" }),
+    ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item(select_opts), { "i", "s", "c" }),
+    ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item(select_opts), { "i", "s", "c" }),
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      local col = vim.fn.col('.') - 1
 
-autocmd FileType go nmap gr  :GoReferrers<CR>
+      if cmp.visible() then
+        print(cmp.get_entries())
+        cmp.select_next_item(select_opts)
+      elseif col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+        fallback()
+      else
+        cmp.complete()
+      end
+    end, {'i', 's'}),
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item(select_opts)
+      else
+        fallback()
+      end
+    end, {'i', 's'}),
+  },
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  },
+  formatting = {
+    fields = {'menu', 'abbr', 'kind'},
+    format = function(entry, item)
+      local menu_icon = {
+        nvim_lsp = 'λ',
+        luasnip = '⋗',
+        buffer = 'Ω',
+        path = '🖫',
+      }
 
-" autoimports
-let g:go_fmt_command = "goimports"
+      item.menu = menu_icon[entry.source.name]
+      return item
+    end,
+  },
+  sources = cmp.config.sources({
+    {name = 'path'},
+    {name = 'nvim_lsp', keyword_length = 1},
+    {name = 'buffer', keyword_length = 3},
+  }),
+})
+lspconfig['gopls'].setup({
+  cmd = {'gopls'},
+  capabilities = capabilities,
+  filetypes = {"go"};
+  settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+        shadow = true,
+     },
+     staticcheck = true,
+    },
+  },
+})
 
-" Run gofmt on save
-autocmd BufWritePre *.go :call LanguageClient#textDocument_formatting_sync()
+lspconfig['solargraph'].setup({
+  flags = {
+    debounce_text_changes = 150,
+  },
+  cmd = { "bundle", "exec", "solargraph", "stdio" },
+  capabilities = capabilities,
+  filetypes = {"ruby"};
+  settings = {
+    solargraph = {
+      autoformat = true,
+      completion = true,
+      diagnostic = true,
+      folding = true,
+      references = true,
+      rename = true,
+      symbols = true
+    }
+  }
+})
 
-" Linting
-let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck','revive','staticcheck','unused','varcheck']
-let g:go_metalinter_autosave = 1
+  vim.api.nvim_create_autocmd('LspAttach', {
+    desc = 'LSP actions',
+    callback = function()
+      local bufmap = function(mode, lhs, rhs)
+        local opts = {buffer = true}
+        vim.keymap.set(mode, lhs, rhs, opts)
+      end
+      bufmap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
+      -- Jump to the definition
+      bufmap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>')
+      -- Jump to declaration
+      bufmap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>')
+      -- Lists all the implementations for the symbol under the cursor
+      bufmap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>')
+      -- Jumps to the definition of the type symbol
+      bufmap('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>')
+      -- Lists all the references 
+      bufmap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>')
+      -- Displays a function's signature information
+      bufmap('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>')
+      -- Renames all references to the symbol under the cursor
+      bufmap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>')
+      -- Selects a code action available at the current cursor position
+      bufmap('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>')
+      bufmap('x', '<F4>', '<cmd>lua vim.lsp.buf.range_code_action()<cr>')
+      -- Show diagnostics in a floating window
+      bufmap('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
+      -- Move to the previous diagnostic
+      bufmap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
+      -- Move to the next diagnostic
+      bufmap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+    end
+  })
+EOF
 
-" show type info
-let g:go_auto_type_info = 1
-" highlighting
-
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_build_constraints = 1
-
-" auto suggestions / completion
-
-let g:deoplete#enable_at_startup = 1
-call deoplete#custom#option('omni_patterns', { 'go': '[^. *\t]\.\w*', 'ruby': '[^. *\t]\.\h\w*\|\h\w*::'})
+" ff for file search
+nnoremap ff :Files<CR>
+nnoremap fs :Rg<CR>
 
