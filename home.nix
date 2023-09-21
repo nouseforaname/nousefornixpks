@@ -209,6 +209,7 @@
     godef
     gopls
     gocode
+    gotools
     golangci-lint
     delve
     go_1_21
