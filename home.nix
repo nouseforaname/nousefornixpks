@@ -1,10 +1,25 @@
 { config, pkgs , options, lib, services, ... }:
-  let 
+  let
+  nixGL = import <nixgl> { };
+  nixGLWrap = pkg:
+    let
+      bin = "${pkg}/bin";
+      executables = builtins.attrNames (builtins.readDir bin);
+    in
+    pkgs.buildEnv {
+      name = "nixGL-${pkg.name}";
+      paths = map
+        (name: pkgs.writeShellScriptBin name ''
+          exec -a "$0" ${nixGL.nixGLIntel}/bin/nixGL ${bin}/${name} "$@"
+        '')
+        executables;
+    };
     opkgs = import (builtins.fetchTarball {
         url = "https://github.com/NixOS/nixpkgs/archive/7d7622909a38a46415dd146ec046fdc0f3309f44.tar.gz";
     }) {};
   in  
 {
+
   targets.genericLinux.enable =  true;
   nixpkgs.config.allowUnfree = true;
   home= {
@@ -13,18 +28,18 @@
     stateVersion = "22.05";
   };
   programs = {
-    vscode = {
-      enable = true;
-      package = pkgs.vscodium;    # You can skip this if you want to use the unfree version
-      extensions = with pkgs.vscode-extensions; [
-        # Some example extensions...
-        dracula-theme.theme-dracula
-      ];
-      userSettings = {
-        javascript.validate.enable = false;
-        diffEditor.ignoreTrimWhitespace= false;
-      };
-    };
+  # vscode = {
+  #   enable = true;
+  #   package = pkgs.vscodium;    # You can skip this if you want to use the unfree version
+  #   extensions = with pkgs.vscode-extensions; [
+  #     # Some example extensions...
+  #     dracula-theme.theme-dracula
+  #   ];
+  #   userSettings = {
+  #     javascript.validate.enable = false;
+  #     diffEditor.ignoreTrimWhitespace= false;
+  #   };
+  # };
 
     fzf = {
       enable = true;
@@ -45,6 +60,7 @@
       historyControl = ["ignoredups"];
       historyIgnore = ["ls"];
       shellAliases = {
+        vpn = "sudo -E openconnect -u 'kkiess@vmware.com' --protocol=gp gp-sof6-gw2.vmware.com --servercert=pin-sha256:C9WXf4blI4PBsgd9eUbro/z4HzyIUULu5V107p748hA= -b";
         ls = "ls --color=auto";
         ll = "ls -la --color=auto";
         omfly = "nix-shell /home/kkiess/workspace/nousefornixpkg/shells/fly-60.nix";
@@ -70,7 +86,7 @@
     git = {
       enable = true;
       userName  = "nouseforaname";
-      userEmail = "user.email=34882943+nouseforaname@users.noreply.github.com";
+      userEmail = "34882943+nouseforaname@users.noreply.github.com";
       extraConfig = {
         pull = { rebase = true; };
         init = { defaultBranch = "main"; };
@@ -80,45 +96,35 @@
       ignores = [ "*~" ];
       lfs.enable = true;
     };
-    alacritty = {
-      enable = true;
-
-      settings = {
-        env = {
-          "TERM" = "xterm-256color";
-        };
-        selection = {
-          save_to_clipboard = true;
-        };
-      };
-    };
     home-manager.enable = true;
     neovim = {
       enable = true;
       plugins = with pkgs; with pkgs.vimPlugins;[
-        markdown-preview-nvim
+        
         # LSPs
-        fzf-vim
-#       vim-nix
-#       vim-jsonnet
         nvim-lspconfig
         nvim-cmp
         vim-vsnip
         cmp-nvim-lsp
         cmp-vsnip
-
+        cmp-fuzzy-buffer
         #json highlighting
-#       vim-json
-        #terraform
+        openconnect
+#       terraform
 #       vim-terraform
 #       vim-terraform-completion
-        
+        vim-shellcheck 
         #nix expressions
-#       statix
+        statix
+#       vim-nix
 
-        #git blame
+        #general nvim addons
+        fzf-vim
         git-blame-nvim
-
+        markdown-preview-nvim
+#       vim-json
+#       vim-jsonnet
+        
       ];
       viAlias = true;
       vimAlias = true;
@@ -156,8 +162,7 @@
   };
 
   home.packages = with pkgs; [
-    kubernetes-helm
-    velero
+    bundix
     entr
     libyaml.dev
     kubectl
@@ -167,7 +172,11 @@
     xq
     jsonnet
     fly79
+    nixGL.nixGLIntel
+    alacritty
     terraform
+    openconnect
+    podman
     delve
     vault
     virtualenv
@@ -176,7 +185,6 @@
     tfsec
     tflint
     ytt
-    bosh-bootloader
     graphviz
     sshuttle
     ripgrep
@@ -200,19 +208,18 @@
     jq
     readline 
     coreutils
-    #bosh-7-4-0
-    nodenv
-    yarn
-    #curlFull
+    bosh-7-4-0
     htop
     mod
     godef
     gopls
-    gocode
     gotools
     golangci-lint
+    git-lfs
+    tmate
+    ginkgo
     delve
-    go_1_21
+    go_1_22
     slack
     firefox
     libtool
@@ -220,30 +227,29 @@
     gcc
     patchelf
     cloudfoundry-cli
-    tabnine
     spotify
     libpcap
     libyaml
     postgresql
-    opkgs.mysql57
     libxml2
     libxslt
     pkg-config
     gnumake
-    curlFull.dev
+    curlFull
+    shellcheck
   ];
   services = {
     lorri.enable = true;
-    keybase = {
-      enable = true;
-    };
-    kbfs =  {
-      enable = true;
-    };
+#   keybase = {
+#     enable = true;
+#   };
+#   kbfs =  {
+#     enable = true;
+#   };
   };
 
   #fusermount missing
-  systemd.user.services.kbfs.Service.Environment = pkgs.lib.mkForce "PATH=/usr/bin:/run/wrappers/bin/:$PATH";
-  systemd.user.services.kbfs.Service.ExecStopPost = pkgs.lib.mkForce "/usr/bin/fusermount -u \"%h/keybase\"";
+# systemd.user.services.kbfs.Service.Environment = pkgs.lib.mkForce "PATH=/usr/bin:/run/wrappers/bin/:$PATH";
+# systemd.user.services.kbfs.Service.ExecStopPost = pkgs.lib.mkForce "/usr/bin/fusermount -u \"%h/keybase\"";
 }
 

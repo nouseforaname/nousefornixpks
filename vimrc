@@ -14,6 +14,13 @@ hi CursorLineNr guibg=#ff0000 ctermbg=red
 set cursorline
 set cursorlineopt=number
 
+" run ShellCheck on save
+augroup sh_autocmd
+  autocmd!
+  au BufWrite *.sh ShellCheck
+  autocmd QuickFixCmdPost [^l]* nested cwindow
+  autocmd QuickFixCmdPost    l* nested lwindow
+augroup END
 
 " au! BufRead,BufNewFile *.json set filetype=json
 " augroup json_autocmd
@@ -78,9 +85,9 @@ cmp.setup({
       vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
     end,
   },
-	view = {
-		entries = "native",
-	},
+ 	view = {
+ 		entries = "native",
+ 	},
   mapping = {
     ['<CR>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { "i", "s", "c" }),
     ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item(select_opts), { "i", "s", "c" }),
@@ -123,7 +130,7 @@ cmp.setup({
   sources = cmp.config.sources({
     {name = 'path'},
     {name = 'nvim_lsp', keyword_length = 1},
-    {name = 'buffer', keyword_length = 3},
+    {name = 'fuzzy_buffer', keyword_length = 3},
   }),
 })
 
@@ -140,7 +147,6 @@ lspconfig['gopls'].setup({
     },
   },
 })
-
 lspconfig['solargraph'].setup({
   flags = {
     debounce_text_changes = 150,
