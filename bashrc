@@ -25,5 +25,4 @@ function __open_in_vim {
 }
 export __open_in_vim
 bind -x '"\C-f":"__open_in_vim"'
-export TERM='screen'
 export PATH=${PATH}:~/go/bin

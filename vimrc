@@ -37,40 +37,31 @@ augroup END
 " RUBY SETUP 
 
 lua << EOF
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
-function goimports(timeoutms)
-  local context = { source = { organizeImports = true } }
-  -- vim.validate { context = { context, "t", true } }
+-- optionally enable 24-bit colour
+vim.opt.termguicolors = true
+vim.o.termguicolors = true
 
-  local params = vim.lsp.util.make_range_params()
-  params.context = context
-
-  -- See the implementation of the textDocument/codeAction callback
-  -- (lua/vim/lsp/handler.lua) for how to do this properly.
-  local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, timeout_ms)
-  if not result or next(result) == nil then return end
-  local actions = result[1].result
-  if not actions then return end
-  local action = actions[1]
-
-  -- textDocument/codeAction can return either Command[] or CodeAction[]. If it
-  -- is a CodeAction, it can have either an edit, a command or both. Edits
-  -- should be executed first.
-  if action.edit or type(action.command) == "table" then
-    if action.edit then
-      vim.lsp.util.apply_workspace_edit(action.edit, "utf-16")
-    end
-    if type(action.command) == "table" then
-      vim.lsp.buf.execute_command(action.command)
-    end
-  else
-    vim.lsp.buf.execute_command(action)
-  end
-end
+require("nvim-tree").setup({
+  sort = {
+    sorter = "case_sensitive",
+  },
+  view = {
+    width = 30,
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = true,
+  },
+})
 
 local lspconfig = require('lspconfig')
 local lsp_defaults = lspconfig.util.default_config
-
 lsp_defaults.capabilities = vim.tbl_deep_extend(
   'force',
   lsp_defaults.capabilities,
@@ -133,26 +124,95 @@ cmp.setup({
     {name = 'fuzzy_buffer', keyword_length = 3},
   }),
 })
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+  pattern = { "*.java" },
+  callback = function()
+    local _, _ = pcall(vim.lsp.codelens.refresh)
+  end,
+})
+
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = {"*.java"},
+  callback = function()
+    vim.lsp.buf.format()
+    require'jdtls'.organize_imports()
+  end
+})
+local config = {
+    filetypes = { 'java' },
+    cmd = {'jdtls'},
+    on_attach = on_attach,
+    capabilities = capabilities,
+    root_dir = vim.fs.dirname(
+      vim.fs.find({ ".gradlew", ".git", "mvnw", "pom.xml", "build.gradle" }, { upward = true })[1]
+    ),
+    
+    settings = {
+      java = {
+        signatureHelp = { enabled = true },
+      },
+    },
+    
+    init_options = {
+      bundles = bundles,
+    },
+}
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "java",
+  callback = function()
+    require("jdtls").start_or_attach(config)
+  end,
+})
 
 lspconfig['gopls'].setup({
   cmd = {'gopls'},
-  filetypes = {"go"};
+  filetypes = {"go", "gomod", "gowork"},
+  capabilities = capabilities,
   settings = {
     gopls = {
+      gofumpt = true,
+      codelenses = {
+        gc_details = false,
+        generate = true,
+        regenerate_cgo = true,
+        run_govulncheck = true,
+        test = true,
+        tidy = true,
+      },
+      hints = {
+        assignVariableTypes = true,
+        compositeLiteralFields = true,
+        compositeLiteralTypes = true,
+        constantValues = true,
+        functionTypeParameters = true,
+        parameterNames = true,
+        rangeVariableTypes = true,
+      },
       analyses = {
+        fieldalignment = true,
+        nilness = true,
         unusedparams = true,
+        unusedwrite = true,
+        useany = true,
         shadow = true,
-     },
-     staticcheck = true,
+      },
+      usePlaceholders = true,
+      completeUnimported = true,
+      staticcheck = true,
+      directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
+      semanticTokens = true,
     },
   },
 })
+
+lspconfig['rubocop'].setup{}
+
 lspconfig['solargraph'].setup({
   flags = {
     debounce_text_changes = 150,
   },
-  cmd = { "bundle", "exec", "solargraph", "stdio" },
-  filetypes = {"ruby"};
+  cmd = { "solargraph", "stdio" },
+  filetypes = {"ruby", "erb"};
   settings = {
     solargraph = {
       useBundler = true,
@@ -167,11 +227,22 @@ lspconfig['solargraph'].setup({
   }
 })
 
-vim.api.nvim_create_autocmd('BufWritePre', {
-  pattern = {"*.go"},
+-- format on save ruby
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.rb",
   callback = function()
     vim.lsp.buf.format()
-    goimports(1000)
+  end,
+})
+-- format on save go
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = {"*.go"},
+  callback = function() 
+    vim.lsp.buf.format()
+    vim.lsp.buf.code_action({ 
+      context = { only = { 'source.organizeImports' } },
+      apply = true
+    }) 
   end
 })
 vim.api.nvim_create_autocmd('LspAttach', {

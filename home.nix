@@ -60,10 +60,13 @@
       historyControl = ["ignoredups"];
       historyIgnore = ["ls"];
       shellAliases = {
-        vpn = "sudo -E openconnect -u 'kkiess@vmware.com' --protocol=gp gp-sof6-gw2.vmware.com --servercert=pin-sha256:C9WXf4blI4PBsgd9eUbro/z4HzyIUULu5V107p748hA= -b";
+        vpn = "sudo openconnect -u 'kkiess@vmware.com' --protocol=gp gp-ork2.vmware.com -b";
+        bcvpn = "sudo openconnect portal.vpn.broadcom.com --protocol=gp -u 'kk016259@broadcom.net' --authgroup='Amsterdam'  --csd-wrapper=/usr/lib/openconnect/hipreport.sh -b
+";
         ls = "ls --color=auto";
         ll = "ls -la --color=auto";
         omfly = "nix-shell /home/kkiess/workspace/nousefornixpkg/shells/fly-60.nix";
+        boshfly = "nix-shell /home/kkiess/workspace/nousefornixpkg/shells/fly-7.11.2.nix";
         grep = "grep --color=auto";
         code = "codium";
         cat = "bat -pp";
@@ -102,6 +105,7 @@
       plugins = with pkgs; with pkgs.vimPlugins;[
         
         # LSPs
+        nvim-jdtls
         nvim-lspconfig
         nvim-cmp
         vim-vsnip
@@ -110,6 +114,7 @@
         cmp-fuzzy-buffer
         #json highlighting
         openconnect
+        nvim-tree-lua
 #       terraform
 #       vim-terraform
 #       vim-terraform-completion
@@ -143,14 +148,15 @@
       extraConfig = ''
         set -g mouse off
         set-window-option -g xterm-keys on
-        set-option -a terminal-overrides ",alacritty:RGB"
-        set-option -sg escape-time 10
         bind-key -n Home send Escape "OH"
         bind-key -n End send Escape "OF"
-        set -g pane-active-border-style bg=default,fg=red
+        
+        set -g default-terminal "$TERM"
+        set -ag terminal-overrides ",$TERM:Tc" 
       '';
-      #newSession = true;
-      #shell = "${pkgs.bashInteractive}/bin/bash";
+      plugins = with pkgs.tmuxPlugins; [ 
+        nord
+      ];
     };
     bat = {
       enable = true;
@@ -158,11 +164,13 @@
         theme = "ansi";
       };
     };
-    chromium.enable = true;
   };
 
   home.packages = with pkgs; [
-    bundix
+    nerdfonts
+    tilt
+    kiln_branch
+    vendir
     entr
     libyaml.dev
     kubectl
@@ -193,8 +201,7 @@
     #azure-cli
     #azure-storage-azcopy
     ( google-cloud-sdk.withExtraComponents [ google-cloud-sdk.components.gke-gcloud-auth-plugin ] )
-    credhub_latest
-    chromedriver
+    #credhub_latest
     bashInteractive
     bash-completion
     libmysqlclient
@@ -209,18 +216,21 @@
     readline 
     coreutils
     bosh-7-4-0
+    credhub-cli
+    spruce
     htop
     mod
     godef
     gopls
     gotools
     golangci-lint
+    
+    counterfeiter
     git-lfs
-    tmate
     ginkgo
+    mockgen
     delve
     go_1_22
-    slack
     firefox
     libtool
     unixtools.netstat
@@ -237,6 +247,7 @@
     gnumake
     curlFull
     shellcheck
+    gh
   ];
   services = {
     lorri.enable = true;

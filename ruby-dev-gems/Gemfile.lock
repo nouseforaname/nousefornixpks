@@ -1,0 +1,26 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    byebug (11.1.3)
+    codebug (0.0.4)
+      json (~> 2.6)
+    coderay (1.1.3)
+    json (2.6.3)
+    method_source (1.0.0)
+    pry (0.14.2)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+    pry-byebug (3.10.1)
+      byebug (~> 11.0)
+      pry (>= 0.13, < 0.15)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  codebug (~> 0.0.4)
+  pry (~> 0.14.2)
+  pry-byebug (~> 3.10)
+
+BUNDLED WITH
+   2.4.13

@@ -13,7 +13,7 @@ let
         sha256 = sha256Arg;
       };
       
-      vendorSha256 = null;
+      vendorHash = null;
 
       doCheck = false;
 
