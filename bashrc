@@ -27,3 +27,4 @@ function __open_in_vim {
 }
 export __open_in_vim
 bind -x '"\C-f":"__open_in_vim"'
+eval "$(direnv hook bash)"
