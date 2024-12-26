@@ -96,6 +96,15 @@
       ignores = [ "*~" ];
       lfs.enable = true;
     };
+    alacritty = {
+      enable = true;
+
+      settings = {
+        selection = {
+          save_to_clipboard = true;
+        };
+      };
+    };
     home-manager.enable = true;
     neovim = {
       enable = true;
