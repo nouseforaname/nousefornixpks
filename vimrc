@@ -268,6 +268,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end
 })
 EOF
+" vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
 
 " ff for file search
 nnoremap ff :Files<CR>
