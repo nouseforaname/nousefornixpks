@@ -234,11 +234,12 @@ vim.api.nvim_create_autocmd('BufWritePre', {
   end
 })
 vim.api.nvim_create_autocmd('LspAttach', {
-  desc = 'LSP actions',
-  callback = function()
-    local bufmap = function(mode, lhs, rhs)
-      local opts = {buffer = true}
-      vim.keymap.set(mode, lhs, rhs, opts)
+    desc = 'LSP actions',
+    callback = function()
+      local bufmap = function(mode, lhs, rhs)
+        local opts = {buffer = true}
+        vim.keymap.set(mode, lhs, rhs, opts)
+      end
     end
     bufmap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
     -- Jump to the definition
