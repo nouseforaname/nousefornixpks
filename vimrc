@@ -158,6 +158,40 @@ cmp.setup({
     {name = 'fuzzy_buffer', keyword_length = 3},
   }),
 })
+require'lspconfig'.cmake.setup({})
+
+lspconfig['clangd'].setup({
+    on_attach=lsp_keybindings,
+    capabilities = capabilites,
+    filetypes = { 'arduino', 'ino', 'c', 'cpp', 'c++', 'h' },
+    cmd = { 'clangd', '--query-driver=/nix/store/*/bin/xtensa-lx106-elf-*', '--clang-tidy', '--background-index' } 
+})
+
+lspconfig['nil_ls'].setup({
+  autostart = true,
+  capabilities = caps,
+  cmd = { 'nil' },
+  settings = {
+    ['nil'] = {
+      formatting = {
+        command = { "nixpkgs-fmt" },
+      },
+    },
+  },
+})
+
+lspconfig['rust_analyzer'].setup({
+  cmd = {'rust-analyzer'};
+  filetypes={ 'rust' };
+  settings = {
+    ['rust-analyzer'] = {
+      diagnostics = {
+        enable = true;
+      }
+    }
+  }
+})
+
 
 lspconfig['gopls'].setup({
   cmd = {'gopls'},
