@@ -1,14 +1,16 @@
-function duet {
-  source <(/home/kkiess/workspace/nousefornixpkg/duet.sh $1)
-}
 export GPG_TTY=$(tty)
 export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels''${NIX_PATH:+:$NIX_PATH}
 export EDITOR=nvim
 ssh-add ~/keybase/private/nouseforaname/GITHUB/nouseforaname.pem
 source <(kubectl completion bash)
-alias vpn='gpu -c'
+eval "$(fzf --bash)"
+if command -v fzf-share >/dev/null; then
+  source "$(fzf-share)/key-bindings.bash"
+  source "$(fzf-share)/completion.bash"
+fi
+FZF_ALT_C_COMMAND='echo "$(find * -type d)\n$(find .* -type d -maxdepth 0)"'
 function __file_search {
-  RG_PREFIX="rg --line-number -S --no-heading --ignore-case --no-ignore --hidden --follow -g \"!{.git,node_modules,vendor,.bosh,tmp}/*\" -g \"!*/{.git,node_modules,vendor,.bosh,tmp,*.html}/*\""
+  RG_PREFIX="rg --line-number -S --no-heading --ignore-case --no-ignore --hidden --follow -g \"!{.local,.steam,.git,node_modules,vendor,.bosh,tmp}/*\" -g \"!*/{.git,.local,.steam,node_modules,vendor,.bosh,tmp,*.html}/*\""
   INITIAL_QUERY=""
   FZF_DEFAULT_COMMAND="$RG_PREFIX \"''${INITIAL_QUERY}\" | cut -f1-2 -d: " \
     fzf \
@@ -25,5 +27,3 @@ function __open_in_vim {
 }
 export __open_in_vim
 bind -x '"\C-f":"__open_in_vim"'
-export TERM='screen'
-export PATH=${PATH}:~/go/bin
