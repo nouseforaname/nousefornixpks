@@ -1,7 +1,4 @@
 export GPG_TTY=$(tty)
-export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels''${NIX_PATH:+:$NIX_PATH}
-export EDITOR=nvim
-ssh-add ~/keybase/private/nouseforaname/GITHUB/nouseforaname.pem
 source <(kubectl completion bash)
 eval "$(fzf --bash)"
 if command -v fzf-share >/dev/null; then
