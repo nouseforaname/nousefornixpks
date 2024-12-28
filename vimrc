@@ -151,14 +151,18 @@ lspconfig['nil_ls'].setup({
   },
 })
 
-lspconfig['rust_analyzer'].setup({
+lspconfig.rust_analyzer.setup({
   cmd = {'rust-analyzer'};
   filetypes={ 'rust' };
   settings = {
     ['rust-analyzer'] = {
       diagnostics = {
         enable = true;
-      }
+      },
+      checkOnSave = true,
+      imports = {
+        granularity = { group = "module" },
+      },
     }
   }
 })
@@ -197,6 +201,12 @@ lspconfig['solargraph'].setup({
 })
 
 -- FORMAT ON SAVE
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.rs",
+  callback = function()
+    vim.lsp.buf.format()
+  end,
+})
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*.rb",
   callback = function()
