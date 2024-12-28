@@ -12,6 +12,7 @@ in
       ./hardware-configuration.nix
       ./git/git.nix
       ./git/vim.nix
+      ./git/tmux.nix
     ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   # Bootloader.
@@ -161,10 +162,6 @@ in
     steam =  {
       enable = true;
       remotePlay.openFirewall = false; # Open ports in the firewall for Steam Remote Play
-    };
-    tmux = {
-      enable = true;
-      plugins = [ pkgs.tmuxPlugins.nord ];
     };
   };
   # Allow unfree packages
