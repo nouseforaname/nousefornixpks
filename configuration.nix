@@ -3,13 +3,15 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-let 
+let
   unstable = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/nixos-unstable") {};
 in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./git/git.nix
+      ./git/vim.nix
     ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   # Bootloader.
@@ -21,10 +23,10 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
-  
+
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
-  
+
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
@@ -67,7 +69,7 @@ in
       desktopManager.gnome.enable = true;
 
       # Configure keymap in X11
-      xkb = { 
+      xkb = {
         layout = "us";
         variant = "";
       };
@@ -85,7 +87,7 @@ in
 
     # Keybase
     keybase.enable = true;
-    kbfs = { 
+    kbfs = {
       enable = true;
       #enableRedirector = true;
     };
@@ -139,7 +141,6 @@ in
       inkscape
       golint
       gopls
-      nil
       android-studio
       spotify
     ];
@@ -164,43 +165,12 @@ in
     tmux = {
       enable = true;
       plugins = [ pkgs.tmuxPlugins.nord ];
-    }; 
-    neovim = {
-      viAlias = true;
-      vimAlias = true;
-      enable = true;
-      configure = {
-        packages.myPlugins = with pkgs.vimPlugins; {
-          start = [
-            markdown-preview-nvim
-
-	          nvim-tree-lua
-            # LSPs
-            fzf-vim
-            vim-nix
-            nvim-cmp
-            nvim-lspconfig
-            vim-vsnip
-            cmp-nvim-lsp
-            cmp-vsnip
-
-            #json highlighting
-            #terraform
-
-            #nix expressions
-            statix
-            #git blame
-            git-blame-nvim
-          ];
-	      };
-    	  customRC = builtins.readFile "${config.users.users.nouseforaname.home}/workspace/nousefornixpks/vimrc";
-      };
     };
   };
   # Allow unfree packages
   nixpkgs.config = {
     allowUnfree = true;
     # rocmSupport = true;
-  }; 
+  };
   system.stateVersion = "23.11"; # Did you read the comment?
 }
