@@ -129,16 +129,19 @@ cmp.setup({
     {name = 'fuzzy_buffer', keyword_length = 3},
   }),
 })
-require'lspconfig'.cmake.setup({})
 
-lspconfig['clangd'].setup({
+
+-- SETUP LSPs
+lspconfig.cmake.setup({})
+
+lspconfig.clangd.setup({
     on_attach=lsp_keybindings,
     capabilities = capabilites,
     filetypes = { 'arduino', 'ino', 'c', 'cpp', 'c++', 'h' },
     cmd = { 'clangd', '--query-driver=/nix/store/*/bin/xtensa-lx106-elf-*', '--clang-tidy', '--background-index' } 
 })
 
-lspconfig['nil_ls'].setup({
+lspconfig.nil_ls.setup({
   autostart = true,
   capabilities = caps,
   cmd = { 'nil' },
@@ -167,7 +170,7 @@ lspconfig.rust_analyzer.setup({
   }
 })
 
-lspconfig['gopls'].setup({
+lspconfig.gopls.setup({
   cmd = {'gopls'},
   filetypes = {"go"};
   settings = {
@@ -180,7 +183,8 @@ lspconfig['gopls'].setup({
     },
   },
 })
-lspconfig['solargraph'].setup({
+
+lspconfig.solargraph.setup({
   flags = {
     debounce_text_changes = 150,
   },
@@ -199,6 +203,7 @@ lspconfig['solargraph'].setup({
     }
   }
 })
+-- SETUP LSPs END
 
 -- FORMAT ON SAVE
 vim.api.nvim_create_autocmd("BufWritePre", {
