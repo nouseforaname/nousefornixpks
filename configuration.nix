@@ -5,14 +5,21 @@
 { config, pkgs, ... }:
 let
   unstable = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/nixos-unstable") {};
+  go = unstable.go;
+  gopls = unstable.gopls.override {
+    buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };
+  };
+  golint = unstable.golint.override {
+    buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };
+  };
 in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./git/git.nix
-      ./git/vim.nix
-      ./git/tmux.nix
+      ./git.nix
+      ./vim.nix
+      ./tmux.nix
     ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   # Bootloader.
