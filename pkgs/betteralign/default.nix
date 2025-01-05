@@ -1,4 +1,5 @@
 {
+  pkgs,
   lib,
   buildGoModule,
   fetchFromGitHub,
@@ -12,14 +13,19 @@ buildGoModule rec {
     owner = "dkorunic";
     repo = "betteralign";
     rev = "v${version}";
-    hash = "sha256-IKKi5Paxg/OS8A95wifhIJUIoih8wQH2xRMLuqTioaE=";
+    hash = "sha256-WJWy8vgMiVMCv3tiRTbDFVStDCx88DMDY4bUCttOzAs="; 
   };
   modRoot = ".";
-  vendorHash = "sha256-EXbtaxWo6djGzQy4KdCy80YmXdYenu2YyRTa2chaHxc=";#lib.fakeHash; 
-  #"sha256-EXbtaxWo6djGzQy4KdCy80YmXdYenu2YyRTa2chaHxc=";
+  date = lib.readFile "${pkgs.runCommand "timestamp" { env.when = builtins.currentTime; } "echo -n `date -u '+%Y-%m-%dT%H:%M:%SZ'` > $out"}";
 
-  # https://github.com/golang/tools/blob/9ed98faa/gopls/main.go#L27-L30
-  ldflags = [ "-X main.version=v${version}" ];
+  vendorHash = "sha256-mX8sGHY/kutZip/KMC4cloc4Ql9Lv0NuVEXJYiXaJ/o="; 
+
+  ldflags = [ 
+    #-extldflags '-static'  -s -w  -X main.GitDirty=$(cat .modified) 
+    "-X main.GitTag=${version}"
+    "-X main.GitCommit=${src.rev}"
+    "-X main.BuildTime=${date}"
+  ];
 
   doCheck = false;
 
