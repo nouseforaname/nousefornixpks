@@ -12,6 +12,8 @@ let
   golint = unstable.golint.override {
     buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };
   };
+  betteralign = pkgs.callPackage ./pkgs/betteralign { buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };};
+  gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };};
 in
 {
   imports =
@@ -148,6 +150,8 @@ in
       slack
       inkscape
       golint
+      betteralign
+      gopium
       gopls
       android-studio
       spotify
