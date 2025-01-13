@@ -52,12 +52,12 @@ in
     LC_TIME = "de_DE.UTF-8";
   };
   #android dev
+  
   programs.adb.enable = true;
   services= {
     ollama = {
       enable = true;
       acceleration = "rocm";
-      package = unstable.ollama;
       environmentVariables = {
         HSA_OVERRIDE_GFX_VERSION="11.0.2";
         OLLAMA_LLM_LIBRARY="rocm_v60000";
