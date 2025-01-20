@@ -8,7 +8,7 @@ fi
 FZF_ALT_C_COMMAND='echo "$(find * -type d)\n$(find .* -type d -maxdepth 0)"'
 
 function __file_search {
-  RG_PREFIX="rg --line-number -S --no-heading --ignore-case --no-ignore --hidden --follow -g \"!{.direnv,.local,.steam,.git,node_modules,vendor,.bosh,tmp}/*\" -g \"!*/{.git,.direnc,.local,.steam,node_modules,vendor,.bosh,tmp,*.html}/*\""
+  RG_PREFIX="rg --line-number -S --no-heading --ignore-case --no-ignore --hidden --follow -g \"!{.direnv,.local,.steam,.git,node_modules,vendor,.bosh,tmp}/*\" -g \"!*/{.direnv,.git,.local,.steam,node_modules,vendor,.bosh,tmp,*.html}/*\""
   INITIAL_QUERY=""
   FZF_DEFAULT_COMMAND="$RG_PREFIX \"''${INITIAL_QUERY}\" | cut -f1-2 -d: " \
     fzf \
