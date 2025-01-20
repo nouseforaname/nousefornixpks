@@ -9,6 +9,7 @@ in
     #LSPs implementation
     gopls
     rust-analyzer
+    rustfmt
     nil
     #linters
     golint
