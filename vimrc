@@ -121,9 +121,10 @@ cmp.setup({
     format = function(entry, item)
       local menu_icon = {
         nvim_lsp = 'λ',
-        luasnip = '⋗',
         buffer = 'Ω',
         path = '🖫',
+        dictionary = '🕮',
+        --luasnip = '⋗',
       }
       item.menu = menu_icon[entry.source.name]
       return item
@@ -133,6 +134,7 @@ cmp.setup({
     {name = 'path'},
     {name = 'nvim_lsp', keyword_length = 1},
     {name = 'fuzzy_buffer', keyword_length = 3},
+    {name = 'dictionary', keyword_length = 3},
   }),
 })
 
