@@ -159,6 +159,7 @@ lspconfig.nil_ls.setup({
     },
   },
 })
+lspconfig.wgsl_analyzer.setup({})
 
 lspconfig.rust_analyzer.setup({
   cmd = {'rust-analyzer'};
