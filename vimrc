@@ -14,6 +14,12 @@ hi CursorLineNr guibg=#ff0000 ctermbg=red
 set cursorline
 set cursorlineopt=number
 
+
+" ff for file search
+nnoremap ff :Files<CR>
+" rigpgrep alias
+nnoremap fs :Rg<CR>
+
 " run ShellCheck on save
 augroup sh_autocmd
   autocmd!
@@ -290,10 +296,4 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 })
 EOF
-
-" ff for file search
-nnoremap ff :Files<CR>
-" rigpgrep alias
-nnoremap fs :Rg<CR>
-
 
