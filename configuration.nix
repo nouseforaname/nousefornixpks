@@ -4,7 +4,10 @@
 
 { config, pkgs, ... }:
 let
-  unstable = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/nixos-unstable") {};
+  # pin unstable because https://github.com/NixOS/nixpkgs/issues/368672 
+  unstable-llama = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/fa35a3c8e17a3de613240fea68f876e5b4896aec") {};
+
+  unstable = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/nixpkgs-unstable") {};
   go = unstable.go;
   gopls = unstable.gopls.override {
     buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };
@@ -16,14 +19,22 @@ let
   gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };};
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./git.nix
-      ./vim.nix
-      ./tmux.nix
-    ];
+
+  nixpkgs.config = {
+    allowUnfree = true;
+    rocmSupport = true;
+  };
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  imports = [ # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./git.nix
+    ./vim.nix
+    ./tmux.nix
+    "${unstable-llama.path}/nixos/modules/services/misc/ollama.nix"
+
+  ];
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -51,21 +62,27 @@ in
     LC_TELEPHONE = "de_DE.UTF-8";
     LC_TIME = "de_DE.UTF-8";
   };
+
   #android dev
-  
   programs.adb.enable = true;
+
+  # Docker
+  virtualisation.docker.enable = true;
+
+  disabledModules = [ "services/misc/ollama.nix" ];
+
   services= {
     ollama = {
+      package = unstable-llama.ollama;
       enable = true;
       acceleration = "rocm";
       environmentVariables = {
         HSA_OVERRIDE_GFX_VERSION="11.0.2";
-        OLLAMA_LLM_LIBRARY="rocm_v60000";
+        OLLAMA_LLM_LIBRARY="rocm";
       };
     };
     udev.packages = [
       pkgs.android-udev-rules
-      pkgs.qmk-udev-rules
     ];
 
     # Enable the X11 windowing system.
@@ -175,10 +192,6 @@ in
       remotePlay.openFirewall = false; # Open ports in the firewall for Steam Remote Play
     };
   };
-  # Allow unfree packages
-  nixpkgs.config = {
-    allowUnfree = true;
-    # rocmSupport = true;
-  };
+
   system.stateVersion = "23.11"; # Did you read the comment?
 }
