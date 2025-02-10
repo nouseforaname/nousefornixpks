@@ -175,6 +175,7 @@ in
       prusa-slicer
       freecad
       element-desktop
+      telegram-desktop
       brave
       signal-desktop
       go
