@@ -164,7 +164,7 @@ in
       totem # video player
     ]);
   };
-
+  security.sudo.wheelNeedsPassword = false;
   users.users.nouseforaname = {
     isNormalUser = true;
     description = "nouseforaname";
