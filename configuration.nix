@@ -168,7 +168,7 @@ in
   users.users.nouseforaname = {
     isNormalUser = true;
     description = "nouseforaname";
-    extraGroups = [ "dialout" "tty" "networkmanager" "wheel" "adbusers" ];
+    extraGroups = [ "docker" "dialout" "tty" "networkmanager" "wheel" "adbusers" ];
 
     packages = with pkgs; [
       thunderbird
