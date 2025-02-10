@@ -220,8 +220,8 @@ lspconfig.solargraph.setup({
   flags = {
     debounce_text_changes = 150,
   },
-  cmd = { "bundle", "exec", "solargraph", "stdio" },
-  filetypes = {"ruby"};
+  cmd = { "solargraph", "stdio" },
+  filetypes = {"ruby", "rakefile"};
   settings = {
     solargraph = {
       useBundler = true,
