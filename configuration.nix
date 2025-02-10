@@ -116,17 +116,13 @@ in
     keybase.enable = true;
     kbfs = {
       enable = true;
-      #enableRedirector = true;
     };
   };
 
   # override generated systemd unit. it sets PrivateTmp = true and that breaks kbfs mounts according to: https://github.com/nix-community/home-manager/issues/4722 not sure why this isn't in upstream nixpkgs
   systemd.user.services.kbfs.serviceConfig.PrivateTmp = pkgs.lib.mkForce false;
   # Enable sound with pipewire.
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
-
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   environment = {
