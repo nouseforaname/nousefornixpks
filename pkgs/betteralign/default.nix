@@ -1,5 +1,4 @@
 {
-  pkgs,
   lib,
   buildGoModule,
   fetchFromGitHub,
@@ -13,12 +12,12 @@ buildGoModule rec {
     owner = "dkorunic";
     repo = "betteralign";
     rev = "v${version}";
-    hash = "sha256-WJWy8vgMiVMCv3tiRTbDFVStDCx88DMDY4bUCttOzAs="; 
+    hash = "sha256-IKKi5Paxg/OS8A95wifhIJUIoih8wQH2xRMLuqTioaE=";
   };
   modRoot = ".";
-  date = lib.readFile "${pkgs.runCommand "timestamp" { env.when = builtins.currentTime; } "echo -n `date -u '+%Y-%m-%dT%H:%M:%SZ'` > $out"}";
+  date = "2025-01-05T20:04:01Z";
 
-  vendorHash = "sha256-mX8sGHY/kutZip/KMC4cloc4Ql9Lv0NuVEXJYiXaJ/o="; 
+  vendorHash = "sha256-EXbtaxWo6djGzQy4KdCy80YmXdYenu2YyRTa2chaHxc=";
 
   ldflags = [ 
     #-extldflags '-static'  -s -w  -X main.GitDirty=$(cat .modified) 
