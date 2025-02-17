@@ -18,6 +18,16 @@ in
       alacritty = {
         enable = true;
         settings = {
+          window = {
+            opacity = 0.9;
+            blur = false;
+          };
+          font = {
+            normal.family = "Iosevka";
+            normal.style = "ExtraThin";
+            bold.family = "Iosevka";
+            bold.style = "SemiBold";
+          };
           selection = {
             save_to_clipboard = true;
           };

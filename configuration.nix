@@ -31,6 +31,7 @@ in
     ./git.nix
     ./vim.nix
     ./tmux.nix
+    ./nixos-home-manager.nix
     "${unstable-llama.path}/nixos/modules/services/misc/ollama.nix"
 
   ];
@@ -135,7 +136,6 @@ in
       bat
       unzip
       usbutils
-      alacritty
       ripgrep
       fprintd
       dejavu_fonts
