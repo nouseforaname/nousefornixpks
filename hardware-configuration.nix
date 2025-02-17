@@ -3,7 +3,7 @@
 # to /etc/nixos/configuration.nix instead.
 { config, lib, modulesPath, ... }:
 let
-  pkgs = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/nixpkgs-unstable") {};
+  pkgs = import ( <unstable> ) {};
 in
 {
   imports =

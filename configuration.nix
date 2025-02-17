@@ -4,10 +4,13 @@
 
 { config, pkgs, ... }:
 let
-  # pin unstable because https://github.com/NixOS/nixpkgs/issues/368672 
-  unstable-llama = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/fa35a3c8e17a3de613240fea68f876e5b4896aec") {};
-
-  unstable = import (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/nixpkgs-unstable") {};
+  unstable = import <unstable> {
+    config = {
+      allowUnfree = true;
+      rocmSupport = true;
+    };
+ };
+  ollama = unstable.ollama;
   go = unstable.go;
   gopls = unstable.gopls.override {
     buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };
@@ -33,8 +36,7 @@ in
     ./starship.nix
     ./tmux.nix
     ./nixos-home-manager.nix
-    "${unstable-llama.path}/nixos/modules/services/misc/ollama.nix"
-
+    "${unstable.path}/nixos/modules/services/misc/ollama.nix"
   ];
 
   # Bootloader.
@@ -74,11 +76,11 @@ in
   # Docker
   virtualisation.docker.enable = true;
 
-  disabledModules = [ "services/misc/ollama.nix" ];
+  disabledModules = [ "services/misc/ollama.nix" "programs/tmux.nix" ];
 
   services= {
     ollama = {
-      package = unstable-llama.ollama;
+      package = ollama;
       enable = true;
       acceleration = "rocm";
       environmentVariables = {

@@ -5,6 +5,7 @@ let
     url = "https://github.com/nix-community/home-manager";
     ref = version;
   };
+  pkgs = import ( <unstable> ) {};
 in
 {
   imports = [
@@ -13,26 +14,21 @@ in
 
   home-manager.users.nouseforaname = {
     home.stateVersion = "24.05"; 
-    /* Here goes the rest of your home-manager config, e.g. home.packages = [ pkgs.foo ]; */
     programs = {
       alacritty = {
+        package = pkgs.alacritty;
         enable = true;
         settings = {
           window = {
             opacity = 0.9;
             blur = false;
           };
-          font = {
-            normal.family = "Iosevka";
-            normal.style = "ExtraThin";
-            bold.family = "Iosevka";
-            bold.style = "SemiBold";
-          };
+          font.size = 10;
           selection = {
             save_to_clipboard = true;
           };
         };
-      };
+      } ;
     };
   };
 }

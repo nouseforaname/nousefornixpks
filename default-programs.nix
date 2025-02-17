@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{ ...}:
+let
+  pkgs = import ( <unstable> ) {};
+in
+{
   programs = {
     nano.enable = false;
     dconf.enable = true;

@@ -1,7 +1,6 @@
 {...}:
 let
   unstable = import ( <unstable> ) {};
-  stable = import ( <nixpkgs> ) {};
 in
 {
   fonts.packages = with unstable;[

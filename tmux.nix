@@ -1,6 +1,13 @@
-{pkgs,...}:{
+{...}:
+let
+  pkgs = import ( <unstable> ) {};
+in
+{
+  imports = [ "${pkgs.path}/nixos/modules/programs/tmux.nix" ];
+
   programs.tmux = {
     enable = true;
+    package = pkgs.tmux;
     keyMode = "vi";
     baseIndex = 1;
     historyLimit = 10000;
