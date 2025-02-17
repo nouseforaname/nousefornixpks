@@ -1,10 +1,13 @@
-{ pkgs,  ... }: {
+{ ... }:
+let
+  pkgs = import ( <unstable> ) {};
+in
+{
   environment.systemPackages = with pkgs; [
     #LSPs implementation
     gopls
     rust-analyzer
     nil
-
     #linters
     golint
     statix #nix-linter
@@ -19,6 +22,9 @@
         start = with vimPlugins; [
           # git
           git-blame-nvim
+
+          # fonts
+          nvim-web-devicons
 
           # navigation // search
           nvim-tree-lua
@@ -43,7 +49,6 @@
           #completion sources
           cmp-nvim-lsp
           cmp-vsnip
-
         ];
       };
     };

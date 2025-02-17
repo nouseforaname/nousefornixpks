@@ -30,6 +30,7 @@ in
     ./hardware-configuration.nix
     ./git.nix
     ./vim.nix
+    ./starship.nix
     ./tmux.nix
     ./nixos-home-manager.nix
     "${unstable-llama.path}/nixos/modules/services/misc/ollama.nix"
@@ -138,8 +139,6 @@ in
       usbutils
       ripgrep
       fprintd
-      dejavu_fonts
-      iosevka
       fuse #if not explicitly installed it seems that the setuid bit from the binary is missing and kbfs fails mounting with permission issues
     ];
     interactiveShellInit = ''
