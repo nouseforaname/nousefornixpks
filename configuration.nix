@@ -11,15 +11,7 @@ let
     };
  };
   ollama = unstable.ollama;
-  go = unstable.go;
-  gopls = unstable.gopls.override {
-    buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };
-  };
-  golint = unstable.golint.override {
-    buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };
-  };
-  betteralign = pkgs.callPackage ./pkgs/betteralign { buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };};
-  gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = unstable.go; };};
+
 in
 {
 
@@ -35,6 +27,7 @@ in
     ./vim.nix
     ./starship.nix
     ./tmux.nix
+    ./tools.nix
     ./nixos-home-manager.nix
     "${unstable.path}/nixos/modules/services/misc/ollama.nix"
   ];
@@ -135,11 +128,8 @@ in
   environment = {
     enableAllTerminfo = true;
     systemPackages = with pkgs; [
-      fzf
-      bat
       unzip
       usbutils
-      ripgrep
       fprintd
       fuse #if not explicitly installed it seems that the setuid bit from the binary is missing and kbfs fails mounting with permission issues
     ];
@@ -166,33 +156,7 @@ in
     ]);
   };
   security.sudo.wheelNeedsPassword = false;
-  users.users.nouseforaname = {
-    isNormalUser = true;
-    description = "nouseforaname";
-    extraGroups = [ "docker" "dialout" "tty" "networkmanager" "wheel" "adbusers" ];
 
-    packages = with pkgs; [
-      thunderbird
-      prusa-slicer
-      freecad
-      element-desktop
-      telegram-desktop
-      brave
-      signal-desktop
-      go
-      xournalpp
-      vlc
-      blender-hip
-      slack
-      inkscape
-      golint
-      betteralign
-      gopium
-      gopls
-      android-studio
-      spotify
-    ];
-  };
 
   programs = {
     direnv = {
