@@ -15,20 +15,16 @@ let
 in
 {
 
-  nixpkgs.config = {
-    allowUnfree = true;
-    rocmSupport = true;
-  };
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
   imports = [ # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./git.nix
     ./vim.nix
+    ./nix-settings.nix
     ./starship.nix
     ./tmux.nix
     ./tools.nix
     ./nixos-home-manager.nix
+    ./nouseforaname.nix
     "${unstable.path}/nixos/modules/services/misc/ollama.nix"
   ];
 
@@ -44,25 +40,6 @@ in
 
   # Enable networking
   networking.networkmanager.enable = true;
-
-  # Set your time zone.
-  time.timeZone = "Europe/Berlin";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "de_DE.UTF-8";
-    LC_IDENTIFICATION = "de_DE.UTF-8";
-    LC_MEASUREMENT = "de_DE.UTF-8";
-    LC_MONETARY = "de_DE.UTF-8";
-    LC_NAME = "de_DE.UTF-8";
-    LC_NUMERIC = "de_DE.UTF-8";
-    LC_PAPER = "de_DE.UTF-8";
-    LC_TELEPHONE = "de_DE.UTF-8";
-    LC_TIME = "de_DE.UTF-8";
-  };
-
   #android dev
   programs.adb.enable = true;
 
@@ -133,9 +110,6 @@ in
       fprintd
       fuse #if not explicitly installed it seems that the setuid bit from the binary is missing and kbfs fails mounting with permission issues
     ];
-    interactiveShellInit = ''
-      . ${config.users.users.nouseforaname.home}/workspace/nousefornixpks/bashrc
-    '';
     gnome.excludePackages = (with pkgs; [
       atomix # puzzle game
       cheese # webcam tool
@@ -156,18 +130,5 @@ in
     ]);
   };
   security.sudo.wheelNeedsPassword = false;
-
-
-  programs = {
-    direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-    };
-    steam =  {
-      enable = true;
-      remotePlay.openFirewall = false; # Open ports in the firewall for Steam Remote Play
-    };
-  };
-
   system.stateVersion = "23.11"; # Did you read the comment?
 }

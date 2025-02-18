@@ -16,49 +16,58 @@ let
   gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; };};
 in
 {
-  users.users.nouseforaname = {
-    isNormalUser = true;
-    description = "nouseforaname";
-    extraGroups = [ "docker" "dialout" "tty" "networkmanager" "wheel" "adbusers" ];
 
-    packages = with pkgs; [
-      # CAD / 3D PRINTING
-      prusa-slicer
-      freecad
-      blender-hip
-      inkscape
-
-      # WEB
-      brave
-      spotify
-      xournalpp
-      vlc
-
-      #GO DEV TOOLS
-      go
-      golint
-      betteralign
-      gopium
-      gopls
-      #android-studio
-
-      #COMMUNICATION
-      signal-desktop
-      element-desktop
-      telegram-desktop
-      slack
-      thunderbird
-    ];
-  };
   programs = {
     nano.enable = false;
     dconf.enable = true;
-    direnv.enable = true;
+    bash = {
+      shellInit = builtins.readFile ./bashrc;
+      shellAliases = {
+        l = "ls -alh";
+        ll = "ls -l";
+        ls = "ls --color=tty";
+      };
+    };
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+    steam =  {
+      enable = true;
+      remotePlay.openFirewall = false; # Open ports in the firewall for Steam Remote Play
+    };
   }; 
   environment.systemPackages = with pkgs; [
     fzf
     ripgrep
     wget
     bat
+
+    # CAD / 3D PRINTING
+    prusa-slicer
+    freecad
+    blender-hip
+    inkscape
+
+    # WEB
+    brave
+    spotify
+    xournalpp
+    vlc
+
+    #GO DEV TOOLS
+    go
+    golint
+    betteralign
+    gopium
+    gopls
+    #android-studio
+
+    #COMMUNICATION
+    signal-desktop
+    element-desktop
+    telegram-desktop
+    slack
+    evolution
   ];
 }
