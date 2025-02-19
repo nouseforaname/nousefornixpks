@@ -36,6 +36,23 @@ in
       enable = true;
       remotePlay.openFirewall = false; # Open ports in the firewall for Steam Remote Play
     };
+    chromium = {
+      enable = true;
+      extensions = [
+        "cjpalhdlnbpafiamejdnhcphjbkeiagm"
+        "nngceckbapebfimnlniiiahkandclblb"
+      ];
+      extraOpts =  {
+        "BrowserSignin" = 0;
+        "SyncDisabled" = true;
+        "PasswordManagerEnabled" = false;
+        "SpellcheckEnabled" = true;
+        "SpellcheckLanguage" = [
+          "de"
+          "en-US"
+        ];
+      };
+    };
   }; 
   environment.systemPackages = with pkgs; [
     fzf
@@ -50,7 +67,7 @@ in
     inkscape
 
     # WEB
-    brave
+    brave  # programs.chromium above will write the config.
     spotify
     xournalpp
     vlc

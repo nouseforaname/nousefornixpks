@@ -27,11 +27,8 @@ in
       };
       amdvlk.enable = true;
     };
-
     pulseaudio.enable = false;
-
     graphics = {
-
       enable = true;
     };
   };
