@@ -21,7 +21,7 @@ in
     nano.enable = false;
     dconf.enable = true;
     bash = {
-      shellInit = builtins.readFile ./bashrc;
+      interactiveShellInit = builtins.readFile ./bashrc;
       shellAliases = {
         l = "ls -alh";
         ll = "ls -l";
