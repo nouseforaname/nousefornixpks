@@ -14,7 +14,6 @@ hi CursorLineNr guibg=#ff0000 ctermbg=red
 set cursorline
 set cursorlineopt=number
 
-
 " ff for file search
 nnoremap ff :Files<CR>
 " rigpgrep alias
@@ -27,6 +26,8 @@ augroup sh_autocmd
   autocmd QuickFixCmdPost [^l]* nested cwindow
   autocmd QuickFixCmdPost    l* nested lwindow
 augroup END
+" no more trailing whitespce
+autocmd BufWritePre * :%s/\s\+$//e
 
 " au! BufRead,BufNewFile *.json set filetype=json
 " augroup json_autocmd
@@ -40,7 +41,7 @@ augroup END
 " augroup END
 
 " https://vonheikemen.github.io/devlog/tools/setup-nvim-lspconfig-plus-nvim-cmp/
-" RUBY SETUP 
+" RUBY SETUP
 
 lua << EOF
 
@@ -50,9 +51,23 @@ vim.g.loaded_netrwPlugin = 1
 
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
+vim.o.termguicolors = true
 
 -- empty setup using defaults
-require("nvim-tree").setup()
+require("nvim-tree").setup({
+  sort = {
+    sorter = "case_sensitive",
+  },
+  view = {
+    width = 30,
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = true,
+    }
+})
 
 -- OR setup with some options
 require("nvim-tree").setup({
@@ -146,7 +161,7 @@ lspconfig.clangd.setup({
     on_attach=lsp_keybindings,
     capabilities = capabilites,
     filetypes = { 'arduino', 'ino', 'c', 'cpp', 'c++', 'h' },
-    cmd = { 'clangd', '--query-driver=/nix/store/*/bin/xtensa-lx106-elf-*', '--clang-tidy', '--background-index' } 
+    cmd = { 'clangd', '--query-driver=/nix/store/*/bin/xtensa-lx106-elf-*', '--clang-tidy', '--background-index' }
 })
 
 lspconfig.nil_ls.setup({
@@ -223,7 +238,7 @@ lspconfig.solargraph.setup({
     debounce_text_changes = 150,
   },
   cmd = { "solargraph", "stdio" },
-  filetypes = {"ruby", "rakefile"};
+  filetypes = {"ruby", "erb", "rakefile"};
   settings = {
     solargraph = {
       useBundler = true,
@@ -239,13 +254,26 @@ lspconfig.solargraph.setup({
 })
 -- SETUP LSPs END
 
+
 -- FORMAT ON SAVE
+
+-- format on save java
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+  pattern = { "*.java" },
+  callback = function()
+    local _, _ = pcall(vim.lsp.codelens.refresh)
+  end,
+})
+
+-- format on save rust
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*.rs",
   callback = function()
     vim.lsp.buf.format()
   end,
 })
+
+-- format on save ruby
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*.rb",
   callback = function()
@@ -257,12 +285,13 @@ vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = {"*.go"},
   callback = function()
     vim.lsp.buf.format()
-    vim.lsp.buf.code_action({ 
+    vim.lsp.buf.code_action({
       context = { only = { 'source.organizeImports' } },
       apply = true
-    }) 
+    })
   end
 })
+
 -- FORMAT ON SAVE END
 vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP actions',
@@ -280,7 +309,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     bufmap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>')
     -- Jumps to the definition of the type symbol
     bufmap('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>')
-    -- Lists all the references 
+    -- Lists all the references
     bufmap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>')
     -- Displays a function's signature information
     bufmap('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>')
