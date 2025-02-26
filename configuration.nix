@@ -22,6 +22,7 @@ in
     ./nix-settings.nix
     ./starship.nix
     ./tmux.nix
+    ./yubikey.nix
     ./tools.nix
     ./nixos-home-manager.nix
     ./nouseforaname.nix
