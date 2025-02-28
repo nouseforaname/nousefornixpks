@@ -10,7 +10,6 @@ let
       rocmSupport = true;
     };
  };
-  ollama = unstable.ollama;
 
 in
 {
@@ -51,13 +50,9 @@ in
 
   services= {
     ollama = {
-      package = ollama;
+      package = unstable.ollama;
       enable = true;
-      acceleration = "rocm";
-      environmentVariables = {
-        HSA_OVERRIDE_GFX_VERSION="11.0.2";
-        OLLAMA_LLM_LIBRARY="rocm";
-      };
+      rocmOverrideGfx = "11.0.2";
     };
     udev.packages = [
       pkgs.android-udev-rules
