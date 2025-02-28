@@ -1,9 +1,12 @@
-export GPG_TTY=$(tty)
 eval "$(fzf --bash)"
 if command -v fzf-share >/dev/null; then
   source "$(fzf-share)/key-bindings.bash"
   source "$(fzf-share)/completion.bash"
 fi
+
+#gpg agent connect
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+gpg-connect-agent updatestartuptty /bye > /dev/null
 
 FZF_ALT_C_COMMAND='echo "$(find * -type d)\n$(find .* -type d -maxdepth 0)"'
 

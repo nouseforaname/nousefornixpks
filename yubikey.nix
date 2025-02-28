@@ -6,6 +6,7 @@ in
   imports = [ "${pkgs.path}/nixos/modules/programs/tmux.nix" ];
   hardware.gpgSmartcards.enable = true;
   services.udev.packages = [ pkgs.yubikey-personalization ];
+  programs.ssh.startAgent = false;
 
   services.pcscd = {
     enable = true;
@@ -24,12 +25,17 @@ in
     });
     '';
   };
-  programs.gnupg = { 
+  programs.gnupg = {
     agent = {
       enable = true;
       enableSSHSupport = true;
+      settings = {
+        ttyname = "$GPG_TTY";
+        default-cache-ttl = 60;
+        max-cache-ttl = 120;
+      };
     };
     package = pkgs.gnupg;
-    
+
   };
 }
