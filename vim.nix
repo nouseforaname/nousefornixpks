@@ -11,9 +11,11 @@ in
     rust-analyzer
     rustfmt
     nil
+
     #linters
     golint
     statix #nix-linter
+    shellcheck
 
 
     # dicts
@@ -58,6 +60,8 @@ in
           # config helper
           nvim-lspconfig
 
+          # auto shell check
+          vim-shellcheck
           #completion plugin
           nvim-cmp
 
