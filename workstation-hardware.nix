@@ -10,8 +10,9 @@
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelModules = [ "kvm-amd" "amdgpu" ];
   boot.extraModulePackages = [ ];
+
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/cbbb960f-0ebe-4b09-ab12-d84ba1218d57";
@@ -37,15 +38,15 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with pkgs; [
-      amdvlk
-    ];
-    # For 32 bit applications 
-    extraPackages32 = with pkgs; [
-      driversi686Linux.amdvlk
-    ];
+  hardware = {
+    pulseaudio.enable = false;
+    amdgpu = {
+      opencl = {
+        enable = true;
+      };
+      amdvlk.enable = true;
+    };
+    graphics.enable = true;
   };
+  services.ollama.rocmOverrideGfx = "10.3.0";
 }

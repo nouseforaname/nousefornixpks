@@ -6,7 +6,6 @@ let
       rocmSupport = true;
     };
  };
-  ollama = unstable.ollama;
 in
 {
 
@@ -21,7 +20,10 @@ in
       ./tools.nix
       ./starship.nix
       ./nouseforaname.nix
+      ./ollama.nix
+      "${unstable.path}/nixos/modules/services/misc/ollama.nix"
     ];
+  disabledModules = [ "services/misc/ollama.nix" "programs/tmux.nix" ];
 
   # Bootloader.
   boot = {
@@ -82,5 +84,4 @@ in
   
   virtualisation.docker.enable = true;
 
-  disabledModules = ["programs/tmux.nix"];
 }

@@ -25,6 +25,7 @@ in
     ./tools.nix
     ./nixos-home-manager.nix
     ./nouseforaname.nix
+    ./ollama.nix
     "${unstable.path}/nixos/modules/services/misc/ollama.nix"
   ];
 
@@ -49,11 +50,6 @@ in
   disabledModules = [ "services/misc/ollama.nix" "programs/tmux.nix" ];
 
   services= {
-    ollama = {
-      package = unstable.ollama;
-      enable = true;
-      rocmOverrideGfx = "11.0.2";
-    };
     udev.packages = [
       pkgs.android-udev-rules
     ];
@@ -62,7 +58,7 @@ in
     xserver={
       enable = true;
       excludePackages = [ pkgs.xterm ];
-      videoDrivers = [ "modesetting" ];
+      videoDrivers = [ "amdgpu" ];
 
       # Enable the GNOME Desktop Environment.
       displayManager.gdm.enable = true;

@@ -20,6 +20,7 @@ in
     kernelModules = [ "kvm-amd" "amdgpu" ];
     extraModulePackages = [ ];
   };
+  services.ollama.overrideRocmGfx = "11.0.2";
   hardware = {
     amdgpu = {
       opencl = {
