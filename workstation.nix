@@ -20,6 +20,7 @@ in
       ./tools.nix
       ./starship.nix
       ./nouseforaname.nix
+      ./yubikey.nix
       ./ollama.nix
       "${unstable.path}/nixos/modules/services/misc/ollama.nix"
     ];
