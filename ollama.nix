@@ -8,4 +8,8 @@ in
       enable = true;
       acceleration = "rocm";
     };
+    services.open-webui = {
+      enable = true;
+      package = unstable.open-webui;
+    };
 }
