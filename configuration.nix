@@ -30,7 +30,7 @@ in
   ];
 
   # Bootloader.
-  boot.loader.systemd-boot = { 
+  boot.loader.systemd-boot = {
     enable = true;
     configurationLimit = 3;
   };

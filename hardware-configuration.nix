@@ -7,7 +7,7 @@ let
 in
 {
   imports =
-    [ 
+    [
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
   boot = {
@@ -40,7 +40,7 @@ in
 
   boot.initrd.luks.devices."luks-25751381-2a2e-4931-9af2-69d189c63185".device = "/dev/disk/by-uuid/25751381-2a2e-4931-9af2-69d189c63185";
 
-  fileSystems."/boot" = { 
+  fileSystems."/boot" = {
       device = "/dev/disk/by-uuid/10FB-ED82";
       fsType = "vfat";
     };
