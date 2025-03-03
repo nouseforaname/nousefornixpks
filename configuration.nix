@@ -81,11 +81,6 @@ in
       pulse.enable = true;
     };
 
-    # Keybase
-    keybase.enable = true;
-    kbfs = {
-      enable = true;
-    };
   };
 
   # override generated systemd unit. it sets PrivateTmp = true and that breaks kbfs mounts according to: https://github.com/nix-community/home-manager/issues/4722 not sure why this isn't in upstream nixpkgs

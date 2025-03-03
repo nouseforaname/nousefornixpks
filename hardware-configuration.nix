@@ -6,10 +6,11 @@ let
   pkgs = import ( <unstable> ) {};
 in
 {
-  imports =
-    [
-      (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+  imports =[
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
+
+  services.ollama.rocmOverrideGfx = "11.0.2";
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     kernelParams = [
@@ -20,7 +21,6 @@ in
     kernelModules = [ "kvm-amd" "amdgpu" ];
     extraModulePackages = [ ];
   };
-  services.ollama.overrideRocmGfx = "11.0.2";
   hardware = {
     amdgpu = {
       opencl = {
