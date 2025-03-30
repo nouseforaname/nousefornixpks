@@ -47,6 +47,7 @@ in
   # Docker
   virtualisation.docker.enable = true;
 
+  #these are overriden in imports
   disabledModules = [ "services/misc/ollama.nix" "programs/tmux.nix" ];
 
   services= {
