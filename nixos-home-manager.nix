@@ -1,6 +1,6 @@
 { ... }:
 let
-  version = "release-24.11";
+  version = "master";
   home-manager = builtins.fetchGit {
     url = "https://github.com/nix-community/home-manager";
     ref = version;
@@ -23,7 +23,11 @@ in
             opacity = 0.9;
             blur = false;
           };
-          font.size = 10;
+	  font = {
+            normal = {
+              family= "IosevkaTermNerdFont";
+	    };	    
+	  };
           selection = {
             save_to_clipboard = true;
           };
