@@ -99,8 +99,8 @@ vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
 cmp.setup({
   snippet = {
     expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-    end,
+      require'luasnip'.lsp_expand(args.body)
+    end
   },
  	view = {
  		entries = "native",
@@ -137,9 +137,9 @@ cmp.setup({
       local menu_icon = {
         nvim_lsp = 'λ',
         buffer = 'Ω',
-        path = '🖫',
-        dictionary = '🕮',
-        --luasnip = '⋗',
+        path = '󰇘',
+        dictionary = '󰂺',
+        luasnip = '⋗',
       }
       item.menu = menu_icon[entry.source.name]
       return item
@@ -150,6 +150,7 @@ cmp.setup({
     {name = 'nvim_lsp', keyword_length = 1},
     {name = 'fuzzy_buffer', keyword_length = 3},
     {name = 'dictionary', keyword_length = 3},
+    {name = 'luasnip', option = { use_show_condition = false } },
   }),
 })
 

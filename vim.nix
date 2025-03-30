@@ -54,21 +54,22 @@ in
           markdown-preview-nvim
 
           # snippets
-          vim-vsnip
-          vim-vsnip-integ
+          luasnip
 
           # config helper
           nvim-lspconfig
 
           # auto shell check
           vim-shellcheck
+
           #completion plugin
           nvim-cmp
 
           #completion sources
+          cmp_luasnip
           cmp-nvim-lsp
-          cmp-vsnip
           cmp-dictionary #dictionaries
+          cmp-path
 
         ];
       };
