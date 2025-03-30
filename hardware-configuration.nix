@@ -10,12 +10,8 @@ in
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  services.ollama.rocmOverrideGfx = "11.0.2";
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelParams = [
-      "amdgpu.gttsize=16384"
-    ];
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usb_storage" "sd_mod" ];
     initrd.kernelModules = [ "amdgpu" ];
     kernelModules = [ "kvm-amd" "amdgpu" ];
@@ -23,9 +19,7 @@ in
   };
   hardware = {
     amdgpu = {
-      opencl = {
-        enable = true;
-      };
+      opencl.enable = true;
       amdvlk.enable = true;
     };
     pulseaudio.enable = false;
@@ -45,7 +39,10 @@ in
       fsType = "vfat";
     };
 
-  swapDevices = [ ];
+  swapDevices = [{
+    device = "/swapfile";
+    size = 32 * 1024;
+  }];
 
   systemd.tmpfiles.rules = [
     "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
