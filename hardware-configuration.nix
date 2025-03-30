@@ -22,7 +22,6 @@ in
       opencl.enable = true;
       amdvlk.enable = true;
     };
-    pulseaudio.enable = false;
     graphics = {
       enable = true;
     };

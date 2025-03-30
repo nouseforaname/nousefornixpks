@@ -51,6 +51,7 @@ in
   disabledModules = [ "services/misc/ollama.nix" "programs/tmux.nix" ];
 
   services= {
+    pulseaudio.enable = false;
     udev.packages = [
       pkgs.android-udev-rules
     ];

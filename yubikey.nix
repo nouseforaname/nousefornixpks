@@ -10,7 +10,7 @@ in
 
   services.pcscd = {
     enable = true;
-    readerConfig = ''
+    readerConfigs = [ ''
     polkit.addRule(function(action, subject) {
             if (action.id == "org.debian.pcsc-lite.access_card" &&
                     subject.isInGroup("wheel")) {
@@ -23,7 +23,7 @@ in
                     return polkit.Result.YES;
             }
     });
-    '';
+    ''];
   };
   programs.gnupg = {
     agent = {
