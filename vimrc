@@ -230,7 +230,7 @@ lspconfig.solargraph.setup({
 -- FORMAT ON SAVE
 
 -- format on save java
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+vim.api.nvim_create_autocmd({ "BufWritePre" }, {
   pattern = { "*.java" },
   callback = function()
     local _, _ = pcall(vim.lsp.codelens.refresh)
@@ -239,15 +239,7 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 
 -- format on save rust
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.rs",
-  callback = function()
-    vim.lsp.buf.format()
-  end,
-})
-
--- format on save ruby
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.rb",
+  pattern = { "*.rb", "*.rs" },
   callback = function()
     vim.lsp.buf.format()
   end,
@@ -256,7 +248,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = {"*.go"},
   callback = function()
-    vim.lsp.buf.format()
     vim.lsp.buf.code_action({
       context = { only = { 'source.organizeImports' } },
       apply = true
@@ -265,6 +256,8 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 })
 
 -- FORMAT ON SAVE END
+
+
 vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP actions',
   callback = function()
