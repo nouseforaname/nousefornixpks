@@ -43,6 +43,7 @@ in
       element-desktop
       telegram-desktop
       slack
+      discord
       evolution
       # CAD / 3D PRINTING
       prusa-slicer

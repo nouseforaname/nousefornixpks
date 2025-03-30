@@ -34,7 +34,7 @@ in
     };
 
   };
- 
+
   environment.systemPackages = with pkgs; [
     fzf
     ripgrep
@@ -47,6 +47,7 @@ in
     #GO DEV TOOLS
     go
     golint
+    ginkgo
     betteralign
     gopium
     gopls
