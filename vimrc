@@ -39,7 +39,8 @@ vim.g.loaded_netrwPlugin = 1
 vim.opt.termguicolors = true
 vim.o.termguicolors = true
 
--- empty setup using defaults
+-- NVIM-TREE
+
 require("nvim-tree").setup({
   sort = {
     sorter = "case_sensitive",
@@ -53,22 +54,6 @@ require("nvim-tree").setup({
   filters = {
     dotfiles = true,
     }
-})
-
--- OR setup with some options
-require("nvim-tree").setup({
-  sort = {
-    sorter = "case_sensitive",
-  },
-  view = {
-    width = 30,
-  },
-  renderer = {
-    group_empty = true,
-  },
-  filters = {
-    dotfiles = true,
-  },
 })
 
 local lspconfig = require'lspconfig'
@@ -216,8 +201,8 @@ lspconfig.gopls.setup({
       staticcheck = true,
       directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
       semanticTokens = true,
+      },
     },
-  },
 })
 
 lspconfig.solargraph.setup({
