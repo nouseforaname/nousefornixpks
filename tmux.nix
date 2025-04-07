@@ -1,10 +1,5 @@
-{...}:
-let
-  pkgs = import ( <unstable> ) {};
-in
+{ pkgs, ... }:
 {
-  imports = [ "${pkgs.path}/nixos/modules/programs/tmux.nix" ];
-
   programs.tmux = {
     enable = true;
     package = pkgs.tmux;

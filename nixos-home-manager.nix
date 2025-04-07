@@ -1,11 +1,10 @@
-{ ... }:
+{ pkgs, ... }:
 let
   version = "master";
   home-manager = builtins.fetchGit {
     url = "https://github.com/nix-community/home-manager";
     ref = version;
   };
-  pkgs = import ( <unstable> ) {};
 in
 {
   imports = [

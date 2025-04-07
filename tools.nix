@@ -1,10 +1,5 @@
-{ ...}:
+{ pkgs, ... }:
 let
-  pkgs = import ( <unstable> ) {
-    config = {
-      allowUnfree = true;
-    };
-  };
   go = pkgs.go;
   gopls = pkgs.gopls.override {
     buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; };

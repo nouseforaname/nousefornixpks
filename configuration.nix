@@ -1,32 +1,28 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ pkgs, ... }:
+{ pkgs, config, lib, modulesPath, ... }:
 let
   unstable = import <unstable> {
     config = {
       allowUnfree = true;
-      rocmSupport = true;
     };
- };
-
+  };
 in
 {
-
-  imports = [ # Include the results of the hardware scan.
-    ./hardware-configuration.nix
+  imports = [
+    # Include the results of the hardware scan.
+    (import ./hardware-configuration.nix { inherit config lib modulesPath; pkgs = unstable; })
     ./git.nix
-    ./vim.nix
+    (import ./vim.nix { pkgs = unstable; })
     ./nix-settings.nix
-    ./starship.nix
-    ./tmux.nix
-    ./yubikey.nix
-    ./tools.nix
-    ./nixos-home-manager.nix
-    ./nouseforaname.nix
-    ./ollama.nix
-    "${unstable.path}/nixos/modules/services/misc/ollama.nix"
+    (import ./starship.nix { pkgs = unstable; })
+    (import ./tmux.nix { pkgs = unstable; })
+    (import ./yubikey.nix { pkgs = unstable; })
+    (import ./tools.nix { pkgs = unstable; })
+    (import ./nixos-home-manager.nix { pkgs = unstable; })
+    (import ./nouseforaname.nix { pkgs = unstable; })
+    (import ./ollama.nix { inherit unstable; })
   ];
 
   # Bootloader.

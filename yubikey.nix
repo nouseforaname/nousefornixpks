@@ -1,7 +1,4 @@
-{...}:
-let
-  pkgs = import ( <unstable> ) {};
-in
+{ pkgs, ... }:
 {
   imports = [ "${pkgs.path}/nixos/modules/programs/tmux.nix" ];
   hardware.gpgSmartcards.enable = true;

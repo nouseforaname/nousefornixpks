@@ -1,6 +1,5 @@
-{ ... }:
+{ pkgs, ... }:
 let
-  pkgs = import ( <unstable> ) {};
   english_dict = pkgs.hunspellDicts.en_US;
   german_dict = pkgs.hunspellDicts.de_DE;
 in
@@ -11,6 +10,7 @@ in
     rust-analyzer
     rustfmt
     nil
+    nixpkgs-fmt
 
     #linters
     golint

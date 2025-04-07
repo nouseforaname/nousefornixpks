@@ -1,12 +1,10 @@
-{ config, pkgs, ... }:
-let
-in
+{ pkgs, ... }:
 {
   nixpkgs.config = {
     allowUnfree = true;
     rocmSupport = true;
   };
- 
+
   nix = {
     package = pkgs.nix;
     settings.experimental-features = [ "nix-command" "flakes" ];

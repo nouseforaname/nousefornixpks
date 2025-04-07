@@ -239,7 +239,7 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 
 -- format on save rust
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.rb", "*.rs" },
+  pattern = { "*.nix", "*.rb", "*.rs" },
   callback = function()
     vim.lsp.buf.format()
   end,

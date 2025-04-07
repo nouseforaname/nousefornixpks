@@ -1,16 +1,13 @@
-{...}:
-let
-  unstable = import ( <unstable> ) {};
-in
+{pkgs, ...}:
 {
-  fonts.packages = with unstable;[
+  fonts.packages = with pkgs; [
     nerd-fonts.iosevka
     nerd-fonts.iosevka-term
     nerd-fonts.symbols-only
     nerd-fonts.space-mono
   ];
   programs.starship = {
-    package = unstable.starship;
+    package = pkgs.starship;
     enable = true;
     presets = [
       "nerd-font-symbols"

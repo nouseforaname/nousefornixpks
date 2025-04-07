@@ -1,14 +1,7 @@
-{...}:
-let
-  pkgs = import ( <unstable> ) {
-    config = {
-      allowUnfree = true;
-    };
-};
-in
+{ pkgs, ... }:
 {
   programs = {
-    steam =  {
+    steam = {
       enable = true;
       remotePlay.openFirewall = false; # Open ports in the firewall for Steam Remote Play
     };
