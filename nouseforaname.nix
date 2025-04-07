@@ -11,7 +11,7 @@
         "cjpalhdlnbpafiamejdnhcphjbkeiagm"
         "nngceckbapebfimnlniiiahkandclblb"
       ];
-      extraOpts =  {
+      extraOpts = {
         "BrowserSignin" = 0;
         "SyncDisabled" = true;
         "PasswordManagerEnabled" = false;
@@ -30,7 +30,7 @@
     extraGroups = [ "docker" "dialout" "tty" "networkmanager" "wheel" "adbusers" ];
     packages = with pkgs;[
       # WEB / COMMUNICATION
-      brave  # programs.chromium above will write the config.
+      brave # programs.chromium above will write the config.
       spotify
       signal-desktop
       element-desktop

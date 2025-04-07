@@ -4,7 +4,8 @@
 { pkgs, config, lib, modulesPath, ... }:
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
@@ -15,14 +16,16 @@
   };
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/cbbb960f-0ebe-4b09-ab12-d84ba1218d57";
+    {
+      device = "/dev/disk/by-uuid/cbbb960f-0ebe-4b09-ab12-d84ba1218d57";
       fsType = "ext4";
     };
 
   boot.initrd.luks.devices."luks-5c393cfb-29cb-4920-94ae-c93d7097af8b".device = "/dev/disk/by-uuid/5c393cfb-29cb-4920-94ae-c93d7097af8b";
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0E96-30E3";
+    {
+      device = "/dev/disk/by-uuid/0E96-30E3";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };

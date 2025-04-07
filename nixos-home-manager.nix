@@ -12,7 +12,7 @@ in
   ];
 
   home-manager.users.nouseforaname = {
-    home.stateVersion = "24.05"; 
+    home.stateVersion = "24.05";
     programs = {
       alacritty = {
         package = pkgs.alacritty;
@@ -22,16 +22,16 @@ in
             opacity = 0.9;
             blur = false;
           };
-	  font = {
+          font = {
             normal = {
-              family= "IosevkaTermNerdFont";
-	    };	    
-	  };
+              family = "IosevkaTermNerdFont";
+            };
+          };
           selection = {
             save_to_clipboard = true;
           };
         };
-      } ;
+      };
     };
   };
 }

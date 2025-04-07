@@ -7,8 +7,8 @@ let
   golint = pkgs.golint.override {
     buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; };
   };
-  betteralign = pkgs.callPackage ./pkgs/betteralign { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; };};
-  gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; };};
+  betteralign = pkgs.callPackage ./pkgs/betteralign { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
+  gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
 in
 {
 
