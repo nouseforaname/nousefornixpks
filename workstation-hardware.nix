@@ -48,5 +48,4 @@
     };
     graphics.enable = true;
   };
-  services.ollama.rocmOverrideGfx = "10.3.0";
 }

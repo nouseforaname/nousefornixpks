@@ -22,7 +22,7 @@ in
     (import ./tools.nix { pkgs = unstable; })
     (import ./nixos-home-manager.nix { pkgs = unstable; })
     (import ./nouseforaname.nix { pkgs = unstable; })
-    (import ./ollama.nix { inherit unstable; })
+    (import ./ollama.nix { inherit unstable config; })
   ];
 
   # Bootloader.
