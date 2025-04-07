@@ -1,88 +1,31 @@
-{ pkgs, ... }:
+{ config, lib, modulesPath, ... }:
 let
   unstable = import <unstable> {
     config = {
       allowUnfree = true;
-      rocmSupport = true;
+      # reenable once rocm 6.3 is available. will break open-webui because of torch rocm dependency broken
+      # rocmSupport = true;
     };
- };
+  };
 in
 {
-
+  networking.hostName = "local_horse";
   imports =
-    [ # Include the results of the hardware scan.
-      ./workstation-hardware.nix
-      ./vim.nix
+    [
+      (import ./hardware-configuration.nix { inherit config lib modulesPath; pkgs = unstable; })
+
+      (import ./vim.nix { pkgs = unstable; })
       ./nix-settings.nix
       ./git.nix
-      ./tmux.nix
-      ./nixos-home-manager.nix
-      ./tools.nix
-      ./starship.nix
-      ./nouseforaname.nix
-      ./yubikey.nix
-      ./ollama.nix
-      "${unstable.path}/nixos/modules/services/misc/ollama.nix"
+      (import ./tmux.nix { pkgs = unstable; })
+      (import ./nixos-home-manager.nix { pkgs = unstable; })
+      (import ./tools.nix { pkgs = unstable; })
+      (import ./starship.nix { pkgs = unstable; })
+      (import ./nouseforaname.nix { pkgs = unstable; })
+      (import ./yubikey.nix { pkgs = unstable; })
+      (import ./ollama.nix { inherit unstable config; })
+      (import ./misc-settings.nix { inherit config; pkgs = unstable; })
     ];
-  disabledModules = [ "services/misc/ollama.nix" "programs/tmux.nix" ];
-
-  # Bootloader.
-  boot = {
-    initrd.kernelModules = [ "amdgpu" ];
-    loader = {
-      systemd-boot.enable = true;
-      #efi.canTouchEfiVariables = true;
-    };
-  };
-
-  networking = {
-    hostName = "nixos"; # Define your hostname.
-    networkmanager.enable = true;
-  };
-
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services = {
-    xserver = {
-      enable = true;
-      videoDrivers = [ "amdgpu" ];
-    };
-  };
-
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = false;
-
-  # Enable sound with pipewire.
-  services.pulseaudio = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-  services.keybase = {
-    enable = true;
-  };
-  systemd.user.services.keybase.serviceConfig.ExecPostStart = "${pkgs.keybase}/bin/keybase login";
-  services.kbfs = {
-    enable = true;
-  };
-  #kbfs wont mount when the systemd unit is set to PrivateTmp. No idea why.
-  systemd.user.services.kbfs.serviceConfig.PrivateTmp = pkgs.lib.mkForce false;
 
   system.stateVersion = "24.05"; # Did you read the comment?
-  
-  virtualisation.docker.enable = true;
-
 }
