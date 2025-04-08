@@ -12,7 +12,7 @@ in
   networking.hostName = "local_horse";
   imports =
     [
-      (import ./hardware-configuration.nix { inherit config lib modulesPath; pkgs = unstable; })
+      (import ./workstation-hardware.nix { inherit config lib modulesPath; pkgs = unstable; })
 
       (import ./vim.nix { pkgs = unstable; })
       ./nix-settings.nix
