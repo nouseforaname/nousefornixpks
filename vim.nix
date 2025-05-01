@@ -9,7 +9,7 @@ in
     gopls
     rust-analyzer
     nil
-    nixpkgs-fmt
+    nixfmt
 
     #linters
     golint
