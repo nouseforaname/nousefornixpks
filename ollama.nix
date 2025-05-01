@@ -1,10 +1,10 @@
-{ unstable, config, ... }:
+{ pkgs, config, ... }:
 let
-  ollama-rocm-patched = unstable.ollama-rocm.overrideAttrs { patches = [ ollama-amdgpu-gtt-patch ]; };
   ollama-amdgpu-gtt-patch = builtins.fetchurl {
     # See https://github.com/ollama/ollama/pull/6282/
     url = "https://patch-diff.githubusercontent.com/raw/ollama/ollama/pull/6282.patch";
   };
+  ollama-rocm-patched = pkgs.ollama-rocm.overrideAttrs { patches = [ ollama-amdgpu-gtt-patch ]; };
 in
 {
   services.ollama = {
@@ -20,6 +20,6 @@ in
   services.open-webui = {
     enable = true;
     # nixos-unstable has torch marked as broken for rocm.
-    package = unstable.open-webui;
+    package = pkgs.open-webui;
   };
 }

@@ -3,6 +3,7 @@ let
   unstable = import <unstable> {
     config = {
       allowUnfree = true;
+      rocmSupport = true;
     };
   };
 in
@@ -20,8 +21,14 @@ in
     (import ./starship.nix { pkgs = unstable; })
     (import ./nouseforaname.nix { pkgs = unstable; })
     (import ./yubikey.nix { pkgs = unstable; })
-    (import ./ollama.nix { inherit unstable config; })
-    (import ./misc-settings.nix { inherit config; pkgs = unstable; })
+    (import ./ollama.nix {
+      inherit config;
+      pkgs = unstable;
+    })
+    (import ./misc-settings.nix {
+      inherit config;
+      pkgs = unstable;
+    })
   ];
 
   services = {
