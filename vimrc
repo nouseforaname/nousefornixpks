@@ -53,7 +53,7 @@ require("nvim-tree").setup({
   },
   filters = {
     dotfiles = true,
-    }
+  }
 })
 
 local lspconfig = require'lspconfig'
@@ -107,8 +107,6 @@ cmp.setup({
     format = function(entry, item)
       local menu_icon = {
         nvim_lsp = 'λ',
-        buffer = 'Ω',
-        path = '󰇘',
         dictionary = '󰂺',
         luasnip = '⋗',
       }
@@ -117,11 +115,9 @@ cmp.setup({
     end,
   },
   sources = cmp.config.sources({
-    {name = 'path'},
-    {name = 'nvim_lsp', keyword_length = 1},
-    {name = 'fuzzy_buffer', keyword_length = 3},
+    {name = 'nvim_lsp', },
+    {name = 'luasnip', keyword_length = 2 },
     {name = 'dictionary', keyword_length = 3},
-    {name = 'luasnip', option = { use_show_condition = false } },
   }),
 })
 
@@ -152,12 +148,15 @@ lspconfig.wgsl_analyzer.setup({})
 
 lspconfig.rust_analyzer.setup({
   cmd = {'rust-analyzer'};
+  -- cmd = {'rust-analyzer'};
   filetypes={ 'rust' };
   settings = {
     ['rust-analyzer'] = {
       diagnostics = {
         enable = true;
+        styleLints = { enable = true; },
       },
+      completion = { autoimport = { enable = true; } },
       checkOnSave = true,
       imports = {
         granularity = { group = "module" },

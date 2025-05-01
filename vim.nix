@@ -8,7 +8,6 @@ in
     #LSPs implementation
     gopls
     rust-analyzer
-    rustfmt
     nil
     nixpkgs-fmt
 
@@ -16,7 +15,6 @@ in
     golint
     statix #nix-linter
     shellcheck
-
 
     # dicts
     german_dict
@@ -28,12 +26,12 @@ in
     viAlias = true;
     configure = {
       customRC = builtins.readFile ./vimrc + ''
-      lua << EOS
-        require('cmp_dictionary').setup({
-          paths = { "${english_dict}/share/hunspell/en_US.dic","${german_dict}/share/hunspell/de_DE.dic" },
-          exact_length = 3,
-        })
-      EOS
+        lua << EOS
+          require('cmp_dictionary').setup({
+            paths = { "${english_dict}/share/hunspell/en_US.dic","${german_dict}/share/hunspell/de_DE.dic" },
+            exact_length = 3,
+          })
+        EOS
       '';
       packages.myVimPackage = with pkgs; {
         start = with vimPlugins; [
@@ -69,7 +67,6 @@ in
           cmp_luasnip
           cmp-nvim-lsp
           cmp-dictionary #dictionaries
-          cmp-path
 
         ];
       };
