@@ -81,7 +81,7 @@
      };
      scdaemonSettings = {
        disable-ccid = true;
-       reader-port = "Yubico Yubikey";
+       reader-port = "Yubico YubiKey OTP+FIDO+CCID";
      };
      package = pkgs.gnupg;
    };
@@ -92,7 +92,7 @@
     enableSshSupport = true;
     enableZshIntegration = true;
     extraConfig = ''
-      pinentry-program /Users/lukasz/.nix-profile/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac
+      pinentry-program /Users/kiessk/.nix-profile/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac
       default-cache-ttl 60
       max-cache-ttl 120
     '';
