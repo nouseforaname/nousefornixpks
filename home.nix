@@ -73,6 +73,11 @@ in
       export GPG_TTY="$(tty)"
       export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
     '' ;
+    shellAliases = {
+      cat = "bat";
+      ll = "ls -la";
+    };
+
   };
   programs.git = {
     enable = true;
