@@ -38,6 +38,7 @@ in
     wget
     bat
     direnv
+    gnumake
 
     xournalpp
 
