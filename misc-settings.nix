@@ -66,7 +66,6 @@
       alsa.support32Bit = true;
       pulse.enable = true;
     };
-    # Configure keymap in X11
 
     # Enable CUPS to print documents.
     printing.enable = true;
