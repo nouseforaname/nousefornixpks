@@ -144,6 +144,16 @@ lspconfig.nil_ls.setup({
     },
   },
 })
+vim.filetype.add({
+  extension = {
+    tf = "terraform"
+  }
+})
+lspconfig.terraformls.setup({
+  filetypes = {"tf", "terraform", "hcl"},
+  root_markers = { "*.tf", ".terraform" }
+
+})
 lspconfig.wgsl_analyzer.setup({})
 
 lspconfig.rust_analyzer.setup({
@@ -164,7 +174,6 @@ lspconfig.rust_analyzer.setup({
     }
   }
 })
-
 lspconfig.gopls.setup({
   cmd = {'gopls'},
   filetypes = {"go"};
