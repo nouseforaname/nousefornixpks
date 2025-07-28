@@ -6,11 +6,19 @@ let
   };
   betteralign = pkgs.callPackage ./pkgs/betteralign { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
   gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
+  bosh-cli = pkgs. callPackage ./pkgs/bosh { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
+  carousel = pkgs. callPackage ./pkgs/carousel { version="0.8.0"; sha256="sha256-uEUrsPGQ+Pzc1nZzE+P1iTVWDo406HcH/HepzxJIw3Y="; hash="sha256-4giasQqUVDyxUPDWRt9DUXJvkL7ty1extLmxY63E1LU="; buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
 in
 {
 
 
   nixpkgs.config.allowUnfree= true;
+  nix = {
+    extraOptions = ''
+      extra-experimental-features = nix-command flakes
+    '';
+    package = pkgs.nix;
+  };
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "kiessk";
@@ -23,6 +31,7 @@ in
     fontconfig.enable = true;
   };
   home.packages = with pkgs; [
+
     #fonts
     nerd-fonts.iosevka
     nerd-fonts.iosevka-term
@@ -38,9 +47,26 @@ in
     wget
     bat
     direnv
-    gnumake
+    dnsutils
+    credhub-cli
+    cloudfoundry-cli
+    fly
 
-    xournalpp
+    docker
+    docker-credential-helpers
+
+    jq
+    yq-go
+
+    vault
+    terraform
+
+    # general build tooling
+    clang
+    libc
+    darwin.libresolv
+    gnumake
+    uutils-findutils
 
     #go dev tools
     go
@@ -50,6 +76,9 @@ in
     gopium
     gopls
 
+    #bosh bins
+    bosh-cli
+    carousel
 
   ];
   programs.starship =
@@ -61,7 +90,7 @@ in
       lib.recursiveUpdate
       (lib.mergeAttrsList [
         (getPreset "nerd-font-symbols")
-        (getPreset "gruvbox-rainbow")
+        (getPreset "tokyo-night")
       ])
     {
 
@@ -192,11 +221,13 @@ in
       rust-analyzer
       nil
       nixfmt
+      terraform-ls
 
       #linters
       golint
       statix #nix-linter
       shellcheck
+
     ];
     plugins = with pkgs.vimPlugins; [
       # git
