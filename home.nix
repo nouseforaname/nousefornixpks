@@ -6,7 +6,8 @@ let
   };
   betteralign = pkgs.callPackage ./pkgs/betteralign { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
   gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
-  bosh-cli = pkgs. callPackage ./pkgs/bosh { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
+  bosh-cli = pkgs. callPackage ./pkgs/bosh { sha256 = "sha256-Y3wk05IeWoH5YCrA+CJEtqvwCUxAvYdoYD+qDwTJo5Q="; version = "7.9.7"; buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
+  bbr = pkgs. callPackage ./pkgs/bbr {   version = "1.9.74"; sha256="sha256-fQ9xfGfufKrEX4bquCYFbfeZXb1br+HeugRr/drxBI8="; vendorHash = "sha256-vCWMvE1mr9uzVsZTur02GZY6ewES3ovq+/kjsEQwFxc="; buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
   carousel = pkgs. callPackage ./pkgs/carousel { version="0.8.0"; sha256="sha256-uEUrsPGQ+Pzc1nZzE+P1iTVWDo406HcH/HepzxJIw3Y="; hash="sha256-4giasQqUVDyxUPDWRt9DUXJvkL7ty1extLmxY63E1LU="; buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
 in
 {
@@ -78,6 +79,7 @@ in
 
     #bosh bins
     bosh-cli
+    bbr
     carousel
 
   ];

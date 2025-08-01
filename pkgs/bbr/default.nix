@@ -1,28 +1,29 @@
-{ version, sha256, buildGoModule, fetchFromGitHub, lib}:
+{ version, sha256, vendorHash, buildGoModule, fetchFromGitHub, lib}:
 
 buildGoModule {
-  name = "bosh";
+  name = "bbr";
   version = version;
-  vendorHash = null;
+  vendorHash = vendorHash;
 
   src = fetchFromGitHub {
     owner = "cloudfoundry";
-    repo = "bosh-cli";
+    repo = "bosh-backup-and-restore";
     rev = "v${version}";
     sha256 = sha256;
   };
 
+
   doCheck = false;
+  preCheck = false;
+  subPackages = [ "cmd/bbr" ];
 
-  ldflags=[ "-X 'github.com/cloudfoundry/bosh-cli/v7/cmd.VersionLabel=nix-${version}' -X 'main.Version=v${version}'" ];
+  ldflags=[ "-X 'main.Version=v${version}'" ];
 
-  postInstall = ''
-    mv $out/bin/bosh{-cli,}
-  '';
+  postInstall = '''';
 
   meta = with lib; {
     description = "Command line utility for interacting with a BOSH director";
-    homepage = "https://github.com/cloudfoundry/bosh-cli";
+    homepage = "https://github.com/cloudfoundry/bosh-backup-and-restore";
     license = licenses.asl20;
     maintainers = with maintainers; [ nouseforaname ];
   };
