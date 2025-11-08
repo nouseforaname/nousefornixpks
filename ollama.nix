@@ -1,14 +1,14 @@
 { pkgs, config, ... }:
-let
-  ollama-amdgpu-gtt-patch = builtins.fetchurl {
-    # See https://github.com/ollama/ollama/pull/6282/
-    url = "https://patch-diff.githubusercontent.com/raw/ollama/ollama/pull/6282.patch";
-  };
-  ollama-rocm-patched = pkgs.ollama-rocm.overrideAttrs { patches = [ ollama-amdgpu-gtt-patch ]; };
-in
+#let
+ #ollama-amdgpu-gtt-patch = builtins.fetchurl {
+ #  # See https://github.com/ollama/ollama/pull/6282/
+ #  url = "https://patch-diff.githubusercontent.com/raw/ollama/ollama/pull/6282.patch";
+ #};
+ #ollama-rocm-patched = pkgs.ollama-rocm.overrideAttrs { patches = [ ollama-amdgpu-gtt-patch ]; };
+#in
 {
   services.ollama = {
-    package = ollama-rocm-patched.overrideAttrs { rocmSupport = true; };
+    package = pkgs.ollama-rocm.overrideAttrs { rocmSupport = true; };
     enable = true;
     acceleration = "rocm";
     rocmOverrideGfx =

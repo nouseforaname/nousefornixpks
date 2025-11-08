@@ -10,6 +10,8 @@ let
 in
 {
   networking.hostName = "local_horse";
+  nix.settings.download-buffer-size = 524288000;
+
   imports =
     [
       (import ./workstation-hardware.nix { inherit config lib modulesPath; pkgs = unstable; })
@@ -23,7 +25,7 @@ in
       (import ./starship.nix { pkgs = unstable; })
       (import ./nouseforaname.nix { pkgs = unstable; })
       (import ./yubikey.nix { pkgs = unstable; })
-      (import ./ollama.nix { inherit unstable config; })
+      (import ./ollama.nix { inherit config; pkgs=unstable; })
       (import ./misc-settings.nix { inherit config; pkgs = unstable; })
     ];
 

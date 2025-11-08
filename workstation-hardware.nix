@@ -46,7 +46,6 @@
       opencl = {
         enable = true;
       };
-      amdvlk.enable = true;
     };
     graphics.enable = true;
   };
