@@ -26,7 +26,6 @@ in
     };
 
   };
-
   environment.systemPackages = with pkgs; [
     fzf
     ripgrep
@@ -36,11 +35,8 @@ in
     xournalpp
     vlc
 
-    # wine
-    # support both 32-bit and 64-bit applications
-    wineWowPackages.stable
-    winetricks
-    wineWowPackages.waylandFull
+    #raspi
+    rpi-imager
 
     #GO DEV TOOLS
     go
