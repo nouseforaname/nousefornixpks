@@ -26,10 +26,10 @@ in
       pkgs = unstable;
     })
     (import ./misc-settings.nix {
-      inherit config;
       pkgs = unstable;
     })
   ];
+
 
   services = {
     fprintd.enable = true;
