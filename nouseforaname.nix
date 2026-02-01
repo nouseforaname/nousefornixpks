@@ -41,7 +41,7 @@
       # CAD / 3D PRINTING
       prusa-slicer
       freecad
-      blender-hip
+      pkgsRocm.blender
       inkscape
     ];
   };
