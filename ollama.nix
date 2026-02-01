@@ -10,7 +10,6 @@
   services.ollama = {
     package = pkgs.ollama-rocm.overrideAttrs { rocmSupport = true; };
     enable = true;
-    acceleration = "rocm";
     rocmOverrideGfx =
       if (config.networking.hostName == "mobile_horse") then
         "11.0.2"
