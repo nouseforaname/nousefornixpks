@@ -56,8 +56,7 @@ require("nvim-tree").setup({
   }
 })
 
-local lspconfig = require'lspconfig'
-local lsp_defaults = lspconfig.util.default_config
+local lsp_defaults = require("lspconfig.util").default_config
 
 lsp_defaults.capabilities = vim.tbl_deep_extend(
   'force',
@@ -123,16 +122,20 @@ cmp.setup({
 
 
 -- SETUP LSPs
-lspconfig.cmake.setup({})
+vim.lsp.config("cmake",{})
+vim.lsp.enable("cmake")
+vim.lsp.config("wgsl_analyzer",{})
+vim.lsp.enable("wgsl_analyzer")
 
-lspconfig.clangd.setup({
+vim.lsp.config("clangd",{
     on_attach=lsp_keybindings,
     capabilities = capabilites,
     filetypes = { 'arduino', 'ino', 'c', 'cpp', 'c++', 'h' },
     cmd = { 'clangd', '--query-driver=/nix/store/*/bin/xtensa-lx106-elf-*', '--clang-tidy', '--background-index' }
 })
+vim.lsp.enable("clangd")
 
-lspconfig.nil_ls.setup({
+vim.lsp.config("nil_ls",{
   autostart = true,
   capabilities = caps,
   cmd = { 'nil' },
@@ -144,19 +147,20 @@ lspconfig.nil_ls.setup({
     },
   },
 })
+vim.lsp.enable("nil_ls")
 vim.filetype.add({
   extension = {
     tf = "terraform"
   }
 })
-lspconfig.terraformls.setup({
+vim.lsp.config("terraformls",{
   filetypes = {"tf", "terraform", "hcl"},
   root_markers = { "*.tf", ".terraform" }
 
 })
-lspconfig.wgsl_analyzer.setup({})
+vim.lsp.enable("terraformls")
 
-lspconfig.rust_analyzer.setup({
+vim.lsp.config("rust_analyzer",{
   cmd = {'rust-analyzer'};
   -- cmd = {'rust-analyzer'};
   filetypes={ 'rust' };
@@ -174,7 +178,8 @@ lspconfig.rust_analyzer.setup({
     }
   }
 })
-lspconfig.gopls.setup({
+vim.lsp.enable("rust_analyzer")
+vim.lsp.config("gopls",{
   cmd = {'gopls'},
   filetypes = {"go"};
   settings = {
@@ -212,8 +217,9 @@ lspconfig.gopls.setup({
       },
     },
 })
+vim.lsp.enable("gopls")
 
-lspconfig.solargraph.setup({
+vim.lsp.config("solargraph",{
   flags = {
     debounce_text_changes = 150,
   },
@@ -232,6 +238,7 @@ lspconfig.solargraph.setup({
     }
   }
 })
+vim.lsp.enable("solargraph")
 -- SETUP LSPs END
 
 
@@ -264,8 +271,6 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 })
 
 -- FORMAT ON SAVE END
-
-
 vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP actions',
   callback = function()
@@ -300,5 +305,11 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end
 
 })
+vim.cmd [[
+  highlight Normal guibg=none
+  highlight NonText guibg=none
+  highlight Normal ctermbg=none
+  highlight NonText ctermbg=none
+]]
 EOF
 
