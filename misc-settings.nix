@@ -1,4 +1,4 @@
-{ pkgs, config, ... }: {
+{ pkgs, ... }: {
   # Bootloader.
   boot.loader = {
     systemd-boot = {
@@ -28,7 +28,6 @@
       gnome-characters
       gnome-music
       gnome-photos
-      gnome-terminal
       gnome-tour
       hitori # sudoku game
       iagno # go game
@@ -42,23 +41,9 @@
   # Docker
   virtualisation.docker.enable = true;
   security.rtkit.enable = true;
-
+  services.displayManager.gdm.enable = true; #if (config.networking.hostName == "mobile_horse") then true else false;
+  services.desktopManager.gnome.enable = true; #if (config.networking.hostName == "mobile_horse") then true else false;
   services = {
-    xserver = {
-      enable = true;
-      videoDrivers = [ "amdgpu" ];
-
-      displayManager.gdm.enable = if (config.networking.hostName == "mobile_horse") then true else false;
-      desktopManager.gnome.enable = if (config.networking.hostName == "mobile_horse") then true else false;
-
-      xkb = {
-        layout = "us";
-        variant = "";
-      };
-    };
-    displayManager.sddm.enable = if (config.networking.hostName == "local_horse") then true else false;
-    desktopManager.plasma6.enable = if (config.networking.hostName == "local_horse") then true else false;
-
     pulseaudio.enable = false;
     pipewire = {
       enable = true;
