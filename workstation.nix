@@ -3,8 +3,7 @@ let
   unstable = import <unstable> {
     config = {
       allowUnfree = true;
-      # reenable once rocm 6.3 is available. will break open-webui because of torch rocm dependency broken
-      # rocmSupport = true;
+      rocmSupport = true;
     };
   };
 in
@@ -20,13 +19,13 @@ in
       ./nix-settings.nix
       ./git.nix
       (import ./tmux.nix { pkgs = unstable; })
-      (import ./nixos-home-manager.nix { pkgs = unstable; })
+      (import ./nixos-home-manager.nix { inherit config; pkgs = unstable; })
       (import ./tools.nix { pkgs = unstable; })
       (import ./starship.nix { pkgs = unstable; })
       (import ./nouseforaname.nix { pkgs = unstable; })
       (import ./yubikey.nix { pkgs = unstable; })
       (import ./ollama.nix { inherit config; pkgs=unstable; })
-      (import ./misc-settings.nix { inherit config; pkgs = unstable; })
+      (import ./misc-settings.nix {  pkgs = unstable; })
     ];
 
   system.stateVersion = "24.05"; # Did you read the comment?
