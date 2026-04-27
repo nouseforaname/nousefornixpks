@@ -241,6 +241,8 @@ vim.lsp.config("solargraph",{
 vim.lsp.enable("solargraph")
 -- SETUP LSPs END
 
+vim.lsp.config('jdtls', { cmd = { 'jdtls' } })
+vim.lsp.enable("jdtls")
 
 -- FORMAT ON SAVE
 
@@ -256,7 +258,7 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = { "*.nix", "*.rb", "*.rs" },
   callback = function()
-    vim.lsp.buf.format()
+    vim.lsp.buf.format({timeout_ms = 5000 })
   end,
 })
 

@@ -16,6 +16,7 @@
       unzip
       usbutils
       fprintd
+      libfprint
     ];
     gnome.excludePackages = with pkgs; [
       atomix # puzzle game

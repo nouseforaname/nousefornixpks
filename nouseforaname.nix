@@ -42,6 +42,7 @@
       prusa-slicer
       freecad
       pkgsRocm.blender
+      kdePackages.kdenlive
       inkscape
     ];
   };

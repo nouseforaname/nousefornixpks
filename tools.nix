@@ -1,5 +1,7 @@
-{ pkgs, ... }:
+{pkgs, ... }:
 let
+  libdjinterop = pkgs.callPackage ./pkgs/libdjinterop {};
+  mixxx-custom = pkgs.callPackage ./pkgs/mixxx { inherit libdjinterop; };
   go = pkgs.go;
   golint = pkgs.golint.override {
     buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; };
@@ -8,7 +10,13 @@ let
   #gopium = pkgs.callPackage ./pkgs/gopium { buildGoModule = pkgs.buildGoModule.override { go = pkgs.go; }; };
 in
 {
-
+  # wine printing requirement
+  services.printing.cups-pdf.enable = true;
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "-d";
+  };
   programs = {
     nano.enable = false;
     dconf.enable = true;
@@ -26,7 +34,19 @@ in
     };
 
   };
+
+    # printer driver
+    services.printing.drivers = [
+      pkgs.brlaser
+      pkgs.brgenml1lpr
+      pkgs.brgenml1cupswrapper
+    ];
+ #virtualisation.virtualbox.host.enable = true;
+ #virtualisation.virtualbox.host.enableExtensionPack = true;
+  users.extraGroups.vboxusers.members = [ "nouseforaname" ];
+
   environment.systemPackages = with pkgs; [
+
     fzf
     ripgrep
     wget
@@ -45,5 +65,12 @@ in
     betteralign
     #gopium
     gopls
+
+    #java
+    jdt-language-server
+
+    mixxx-custom
+    # support both 32-bit and 64-bit applications
+    wineWow64Packages.stable
   ];
 }
